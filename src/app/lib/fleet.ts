@@ -120,11 +120,66 @@ export function downloadBlob(filename: string, content: string, type: string) {
   URL.revokeObjectURL(url);
 }
 
-export function openPrintableWindow(title: string, body: string) {
+export function openPrintableWindow(title: string, options: { subtitle?: string; paragraphs?: Array<[string, string]>; table?: { headers: string[]; rows: string[][] }; footer?: string; }) {
   const popup = window.open("", "_blank", "width=960,height=720");
   if (!popup) return;
-  popup.document.write(`<!doctype html><html><head><title>${title}</title><style>body{font-family:Arial,sans-serif;padding:24px;color:#111827}table{width:100%;border-collapse:collapse;margin-top:16px}th,td{border:1px solid #d1d5db;padding:8px;text-align:left;font-size:12px}h1{font-size:20px;margin-bottom:8px}p{font-size:12px;color:#4b5563}</style></head><body>${body}</body></html>`);
+
+  popup.document.write("<!doctype html><html><head><style>body{font-family:Arial,sans-serif;padding:24px;color:#111827}table{width:100%;border-collapse:collapse;margin-top:16px}th,td{border:1px solid #d1d5db;padding:8px;text-align:left;font-size:12px}h1{font-size:20px;margin-bottom:8px}p{font-size:12px;color:#4b5563}strong{color:#111827}</style></head><body></body></html>");
   popup.document.close();
+  popup.document.title = title;
+
+  const body = popup.document.body;
+  const heading = popup.document.createElement("h1");
+  heading.textContent = title;
+  body.appendChild(heading);
+
+  if (options.subtitle) {
+    const subtitle = popup.document.createElement("p");
+    subtitle.textContent = options.subtitle;
+    body.appendChild(subtitle);
+  }
+
+  options.paragraphs?.forEach(([label, value]) => {
+    const paragraph = popup.document.createElement("p");
+    const strong = popup.document.createElement("strong");
+    strong.textContent = `${label}: `;
+    paragraph.appendChild(strong);
+    paragraph.appendChild(popup.document.createTextNode(value));
+    body.appendChild(paragraph);
+  });
+
+  if (options.table) {
+    const table = popup.document.createElement("table");
+    const thead = popup.document.createElement("thead");
+    const headerRow = popup.document.createElement("tr");
+    options.table.headers.forEach((header) => {
+      const th = popup.document.createElement("th");
+      th.textContent = header;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = popup.document.createElement("tbody");
+    options.table.rows.forEach((row) => {
+      const tr = popup.document.createElement("tr");
+      row.forEach((cell) => {
+        const td = popup.document.createElement("td");
+        td.textContent = cell;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    body.appendChild(table);
+  }
+
+  if (options.footer) {
+    const footer = popup.document.createElement("p");
+    footer.textContent = options.footer;
+    body.appendChild(footer);
+  }
+
   popup.focus();
   popup.print();
 }

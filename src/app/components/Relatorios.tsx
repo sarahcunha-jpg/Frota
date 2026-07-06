@@ -13,10 +13,6 @@ const RELATORIOS = [
   { id: "kpi", label: "Disponibilidade da Frota", icon: BarChart2, desc: "KPIs: disponibilidade, MTTR, MTBF e custo por viatura" },
 ] as const;
 
-function toHtmlTable(headers: string[], rows: string[][]) {
-  return `<table><thead><tr>${headers.map((header) => `<th>${header}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
-}
-
 export default function Relatorios() {
   const { viaturas, ordensServico, historico, manutencaoItens, currentUser } = useFleet();
   const [selected, setSelected] = useState<string | null>(null);
@@ -78,7 +74,11 @@ export default function Relatorios() {
 
   function exportPdf() {
     if (!report) return;
-    openPrintableWindow(`Relatório ${selected}`, `<h1>${RELATORIOS.find((item) => item.id === selected)?.label}</h1><p>Período: ${periodo.inicio} a ${periodo.fim}</p>${toHtmlTable(report.headers, report.rows)}<p>${report.footer}</p>`);
+    openPrintableWindow(RELATORIOS.find((item) => item.id === selected)?.label ?? "Relatório", {
+      subtitle: `Período: ${periodo.inicio} a ${periodo.fim}`,
+      table: { headers: report.headers, rows: report.rows },
+      footer: report.footer,
+    });
   }
 
   return (

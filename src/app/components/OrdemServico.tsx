@@ -41,17 +41,18 @@ export default function OrdemServico() {
   }
 
   function printOrder(order: OS) {
-    openPrintableWindow(order.numero, `
-      <h1>${order.numero}</h1>
-      <p>Data: ${order.data} · Status: ${STATUS_CONFIG[order.status].label}</p>
-      <p><strong>Viatura:</strong> ${order.viatura}</p>
-      <p><strong>Problema identificado:</strong> ${order.problema}</p>
-      <p><strong>Serviço executado:</strong> ${order.servico}</p>
-      <p><strong>Responsável:</strong> ${order.responsavel}</p>
-      <p><strong>Peças utilizadas:</strong> ${order.pecas || "—"}</p>
-      <p><strong>Custo:</strong> R$ ${order.custo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-      <p><strong>Tempo de parada:</strong> ${order.tempoParada} dia(s)</p>
-    `);
+    openPrintableWindow(order.numero, {
+      subtitle: `Data: ${order.data} · Status: ${STATUS_CONFIG[order.status].label}`,
+      paragraphs: [
+        ["Viatura", order.viatura],
+        ["Problema identificado", order.problema],
+        ["Serviço executado", order.servico],
+        ["Responsável", order.responsavel],
+        ["Peças utilizadas", order.pecas || "—"],
+        ["Custo", `R$ ${order.custo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`],
+        ["Tempo de parada", `${order.tempoParada} dia(s)`],
+      ],
+    });
   }
 
   return (
