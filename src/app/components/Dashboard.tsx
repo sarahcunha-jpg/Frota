@@ -7,7 +7,7 @@ const COLORS = ["#2575f5", "#10b981", "#ef4444"];
 
 function StatCard({ label, value, sub, icon: Icon, color, glowColor }: { label: string; value: string | number; sub: string; icon: React.ComponentType<{ size?: number; className?: string }>; color: string; glowColor: string; }) {
   return (
-    <div className="rounded-xl p-5 flex items-start gap-4 cursor-default group transition-all duration-250 hover:-translate-y-0.5"
+    <div className="rounded-xl p-5 flex items-start gap-4 cursor-default group transition-all duration-200 hover:-translate-y-0.5"
       style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}
       onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(148,163,184,0.16), 0 4px 20px ${glowColor}`; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)"; }}
