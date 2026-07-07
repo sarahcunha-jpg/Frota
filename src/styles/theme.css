@@ -1,19 +1,98 @@
-/* Report-specific styles */
+/* Theme tokens and refined helpers (fine adjustments: spacing, sizes, hover states) */
 :root{
-  --report-card-bg: rgba(255,255,255,1);
+  /* Palette */
+  --brand-50: #eef6ff;
+  --brand-100: #d6eaff;
+  --brand-300: #74a8ff;
+  --brand-500: #1f6fff;
+  --brand-700: #0b4ed6;
+
+  --success: #18b26b;
+  --warning: #ffb020;
+  --danger: #ff4d4f;
+  --muted: #64748b; /* slightly darker for better legibility */
+
+  /* Surfaces */
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-quiet: #f2f4f8;
+
+  /* Borders / elevation */
+  --border: rgba(15,23,42,0.06);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 2px rgba(16,24,40,0.04);
+  --shadow-md: 0 8px 24px rgba(15,23,42,0.06);
+
+  /* Layout tokens */
+  --card-padding: 14px;
+  --sidebar-width: 260px;
+  --container-max: 1200px;
+
+  /* Buttons */
+  --btn-padding-y: 10px;
+  --btn-padding-x: 14px;
 }
 
+/* Base helpers */
+.app-root{ font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: var(--bg); color: #0f172a; }
+
+/* Inputs */
+.input-surface{ background: var(--surface); border: 1px solid var(--border); transition: box-shadow .15s, border-color .15s; }
+.input-surface:focus{ outline: none; box-shadow: 0 0 0 4px rgba(31,111,255,0.06); border-color: rgba(31,111,255,0.18); }
+
+/* Buttons */
+.btn-primary{ background: linear-gradient(135deg,var(--brand-500),var(--brand-300)); color: #fff; padding: var(--btn-padding-y) var(--btn-padding-x); border-radius: 10px; box-shadow: 0 6px 18px rgba(31,111,255,0.10); transition: transform .12s ease, box-shadow .12s ease; }
+.btn-primary:hover{ transform: translateY(-1px); box-shadow: 0 10px 28px rgba(31,111,255,0.12); }
+.btn-ghost{ background: transparent; color: var(--muted); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(15,23,42,0.04); transition: background .12s ease, border-color .12s ease; }
+.btn-ghost:hover{ background: rgba(15,23,42,0.02); border-color: rgba(15,23,42,0.08); }
+
+/* Icon buttons */
+.icon-btn{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; border:1px solid rgba(15,23,42,0.04); background:transparent; transition:background .12s ease, transform .12s; }
+.icon-btn:hover{ background: rgba(15,23,42,0.03); transform: translateY(-1px); }
+.icon-btn.text-red{ border-color: rgba(255,77,79,0.12); }
+
+/* Cards */
+.card{ background: var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow: var(--shadow-sm); padding: var(--card-padding); }
+.card.small{ padding: 10px; }
+
+/* Vehicle list */
+.vehicle-list{ display:flex; flex-direction:column; gap:12px; }
+.vehicle-card{ display:flex; align-items:center; justify-content:space-between; padding:16px; border-radius:12px; background: var(--surface); border:1px solid var(--border); box-shadow: var(--shadow-sm); transition:transform .12s ease, box-shadow .12s ease; }
+.vehicle-card:hover{ transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.vehicle-icon{ background: linear-gradient(135deg,var(--brand-500),var(--brand-300)); color: #fff; width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+.vehicle-plate{ font-weight:700; font-size:1rem; color:var(--brand-700); }
+.vehicle-model{ font-size:0.88rem; margin-top:4px; color:var(--muted); }
+
+/* Badges */
+.badge{ display:inline-block; padding:6px 10px; border-radius:999px; font-size:13px; }
+.badge.small{ padding:4px 8px; font-size:12px; }
+
+/* Maintenance list */
+.maintenance-list{ display:flex; flex-direction:column; gap:12px; }
+.maintenance-card{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-radius:10px; background: var(--surface); border:1px solid var(--border); transition: background .12s, transform .12s; }
+.maintenance-card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+
+/* Reports */
 .report-card{ display:flex; align-items:flex-start; gap:12px; padding:16px; border-radius:12px; text-align:left; transition:all .15s; border:1px solid var(--border); background: var(--surface); }
-.report-card:hover{ border-color: rgba(15,23,42,0.12); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,0.04); }
+.report-card:hover{ border-color: rgba(15,23,42,0.12); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .report-card-active{ background: linear-gradient(90deg, rgba(31,111,255,0.08), rgba(31,111,255,0.03)); border:1px solid rgba(31,111,255,0.12); box-shadow: 0 8px 24px rgba(31,111,255,0.06); }
 
 .report-result{ margin-top:8px; }
 .report-result .report-result-header{ border-bottom:1px solid rgba(15,23,42,0.04); }
-.report-row{ border-bottom:1px solid rgba(15,23,42,0.04); }
+.report-row{ border-bottom:1px solid rgba(15,23,42,0.04); transition: background .12s; }
 .report-row.alt{ background: rgba(255,255,255,0.02); }
+.report-row:hover{ background: rgba(31,111,255,0.04); }
 
-/* Reuse existing helpers */
-.card{ background: var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow: var(--shadow-sm); }
-.input-surface{ background: #fff; border: 1px solid var(--border); }
-.btn-primary{ background: linear-gradient(135deg,var(--brand-500),var(--brand-300)); color: #fff; padding: 10px 14px; border-radius: 8px; }
-.btn-ghost{ background: transparent; color: var(--muted); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(15,23,42,0.04); }
+/* Modal helpers */
+.modal-overlay{ background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); }
+.modal-panel{ background: var(--surface); border:1px solid var(--border); border-radius:12px; padding: 12px; box-shadow: var(--shadow-md); }
+.modal-header{ border-bottom:1px solid rgba(15,23,42,0.04); }
+.modal-actions .btn-ghost{ border:1px solid rgba(15,23,42,0.04); }
+
+/* Responsive tweaks */
+@media (max-width: 768px){
+  .vehicle-card, .report-card, .maintenance-card{ padding:12px; }
+  .vehicle-icon{ width:44px; height:44px; }
+  .vehicle-plate{ font-size:0.95rem; }
+}
