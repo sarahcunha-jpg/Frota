@@ -1,0 +1,88 @@
+html,body,#root{
+  height:100%;
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  background: var(--bg);
+  color: #0f172a;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Container */
+.app-container{
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Card padrão */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+}
+
+/* Botões */
+.btn {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius: 8px;
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-primary {
+  background: linear-gradient(90deg, var(--brand-500), var(--brand-700));
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--brand-700);
+  border: 1px solid rgba(31,111,255,0.08);
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: linear-gradient(180deg, var(--surface), var(--surface-quiet));
+  border-right: 1px solid var(--border);
+  padding: 18px;
+}
+.sidebar .nav-item {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding: 12px;
+  border-radius: 8px;
+}
+.sidebar .nav-item.active {
+  background: linear-gradient(90deg, rgba(31,111,255,0.08), rgba(31,111,255,0.03));
+  color: var(--brand-700);
+}
+
+/* Header hero */
+.hero {
+  background: linear-gradient(90deg, rgba(31,111,255,0.12), rgba(31,111,255,0.06));
+  border-radius: var(--radius-md);
+  padding: 28px;
+  color: white;
+  background-image: url('/assets/hero-pattern.svg'); /* opcional pattern*/ 
+  background-repeat:no-repeat;
+  background-position:right center;
+}
+
+/* Badge de status */
+.badge {
+  display:inline-block;
+  padding:6px 10px;
+  font-size:13px;
+  border-radius: var(--radius-pill);
+}
+.badge--success { background: rgba(24,178,107,0.12); color: var(--success); }
+.badge--danger { background: rgba(255,77,79,0.08); color: var(--danger); }
