@@ -28,36 +28,44 @@ export default function LoginScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6" style={{ fontFamily: "Inter, sans-serif" }}>
-      <div className="w-full max-w-5xl grid lg:grid-cols-[1.1fr_0.9fr] gap-6 animate-frota-fade-in">
-        <div className="bg-card border border-border rounded-2xl p-8 lg:p-10 shadow-xl shadow-black/20">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/40 transition-transform duration-300 hover:scale-105">
-              <ShieldCheck size={22} className="text-white" />
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ fontFamily: "Inter, sans-serif", background: "radial-gradient(ellipse 80% 80% at 50% -10%, rgba(37,117,245,0.12) 0%, transparent 60%), #080f1e" }}>
+      <div className="w-full max-w-5xl grid lg:grid-cols-[1.1fr_0.9fr] gap-5 animate-frota-slide-up">
+        <div className="rounded-2xl p-8 lg:p-10 shadow-2xl shadow-black/40" style={{ background: "rgba(15,26,46,0.85)", border: "1px solid rgba(148,163,184,0.11)", backdropFilter: "blur(12px)" }}>
+          <div className="flex items-center gap-4 mb-7">
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl flex-shrink-0"
+              style={{ background: "linear-gradient(135deg, #2575f5 0%, #4f8dff 100%)", boxShadow: "0 8px 24px rgba(37,117,245,0.5)" }}>
+              <ShieldCheck size={24} className="text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>GestãoFrota PMSC</h1>
-              <p className="text-sm text-muted-foreground">MVP funcional da gestão da frota do 10º BPM de Blumenau</p>
+              <p className="text-sm text-muted-foreground mt-0.5">MVP funcional da gestão da frota do 10º BPM de Blumenau</p>
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4 mb-6">
+          <div className="grid sm:grid-cols-2 gap-3 mb-7">
             {[
               "Dashboard com indicadores operacionais",
               "Cadastro de viaturas com CRUD e visualização",
               "Plano preventivo com alertas por cor",
               "Ordens de serviço, histórico e relatórios",
-            ].map((item) => (
-              <div key={item} className="rounded-xl border border-border bg-muted/20 p-4 text-sm text-foreground hover:border-primary/20 hover:bg-muted/35 hover:translate-y-[-2px] transition-all duration-200 cursor-default">{item}</div>
+            ].map((item, index) => (
+              <div key={item}
+                className="rounded-xl p-4 text-sm text-foreground animate-frota-slide-up"
+                style={{ background: "rgba(37,117,245,0.06)", border: "1px solid rgba(37,117,245,0.14)", animationDelay: `${index * 0.07}s` }}>
+                <div className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                  <span>{item}</span>
+                </div>
+              </div>
             ))}
           </div>
 
-          <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 p-4 text-sm text-amber-200">
+          <div className="rounded-xl p-4 text-sm text-amber-200" style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.22)" }}>
             Ambiente demonstrativo: selecione um perfil e entre usando a matrícula já exibida no cadastro do usuário.
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 lg:p-10 space-y-5 shadow-xl shadow-black/20">
+        <form onSubmit={handleSubmit} className="rounded-2xl p-8 lg:p-10 space-y-5 shadow-2xl shadow-black/40" style={{ background: "rgba(15,26,46,0.85)", border: "1px solid rgba(148,163,184,0.11)", backdropFilter: "blur(12px)" }}>
           <div>
             <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>Entrar no sistema</h2>
             <p className="text-sm text-muted-foreground mt-1">Autenticação básica com proteção por perfil</p>
@@ -72,7 +80,10 @@ export default function LoginScreen() {
                 setSelectedId(event.target.value);
                 setMatricula(user?.matricula ?? "");
               }}
-              className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:shadow-[0_0_0_3px_rgba(29,108,240,0.12)] transition-all duration-200"
+              className="w-full rounded-lg px-3 py-2.5 text-sm text-foreground outline-none transition-all duration-200"
+              style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(37,117,245,0.6)"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(37,117,245,0.12)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(148,163,184,0.15)"; e.currentTarget.style.boxShadow = ""; }}
             >
               {ativos.map((user) => (
                 <option key={user.id} value={user.id}>{user.nome}</option>
@@ -85,27 +96,35 @@ export default function LoginScreen() {
             <input
               value={matricula}
               onChange={(event) => setMatricula(event.target.value)}
-              className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:shadow-[0_0_0_3px_rgba(29,108,240,0.12)] transition-all duration-200"
+              className="w-full rounded-lg px-3 py-2.5 text-sm text-foreground outline-none transition-all duration-200"
+              style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)", fontFamily: "DM Mono, monospace" }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(37,117,245,0.6)"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(37,117,245,0.12)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(148,163,184,0.15)"; e.currentTarget.style.boxShadow = ""; }}
             />
           </div>
 
           {selected && (
-            <div className="rounded-xl border border-primary/20 bg-primary/10 p-4 transition-all duration-200">
+            <div className="rounded-xl p-4 transition-all duration-300 animate-frota-scale-in" style={{ background: "rgba(37,117,245,0.08)", border: "1px solid rgba(37,117,245,0.22)" }}>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center shadow-sm shadow-primary/20">
-                  <UserRound size={18} className="text-primary" />
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: "linear-gradient(135deg, rgba(37,117,245,0.3), rgba(37,117,245,0.15))", border: "1px solid rgba(37,117,245,0.35)" }}>
+                  <UserRound size={17} className="text-primary" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground text-sm">{selected.nome}</p>
+                  <p className="font-semibold text-foreground text-sm">{selected.nome}</p>
                   <p className="text-xs text-muted-foreground">{ROLE_LABELS[selected.role]} · {selected.unidade}</p>
                 </div>
               </div>
             </div>
           )}
 
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          {error && <p className="text-sm text-red-400 flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-red-400 flex-shrink-0" />{error}</p>}
 
-          <button type="submit" className="w-full bg-primary text-primary-foreground rounded-md py-2.5 text-sm font-medium hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 active:scale-[0.99] transition-all duration-200">
+          <button type="submit" className="w-full rounded-xl py-3 text-sm font-semibold text-white active:scale-[0.99] transition-all duration-200"
+            style={{ background: "linear-gradient(135deg, #2575f5 0%, #4f8dff 100%)", boxShadow: "0 4px 16px rgba(37,117,245,0.4)" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 24px rgba(37,117,245,0.55)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(37,117,245,0.4)"; }}
+          >
             Acessar sistema
           </button>
         </form>

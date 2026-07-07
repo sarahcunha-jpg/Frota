@@ -14,7 +14,7 @@ function toLatLng(x: number, y: number) {
 function divIcon(active: boolean) {
   return L.divIcon({
     className: "",
-    html: `<div style="width:16px;height:16px;border-radius:9999px;background:${active ? "#1d6cf0" : "#10b981"};border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 0 4px ${active ? "rgba(29,108,240,0.18)" : "rgba(16,185,129,0.18)"};"></div>`,
+    html: `<div style="width:16px;height:16px;border-radius:9999px;background:${active ? "#2575f5" : "#10b981"};border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 0 4px ${active ? "rgba(37,117,245,0.22)" : "rgba(16,185,129,0.22)"};"></div>`,
     iconSize: [16, 16],
     iconAnchor: [8, 8],
   });
@@ -95,7 +95,7 @@ export default function Rastreamento() {
   }, [positions, selected]);
 
   if (!allowed) {
-    return <div className="bg-card border border-border rounded-xl p-6 text-sm text-muted-foreground">O rastreamento em tempo real está disponível apenas para perfis de Administrador e Gestor.</div>;
+    return <div className="rounded-xl p-6 text-sm text-muted-foreground" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>O rastreamento em tempo real está disponível apenas para perfis de Administrador e Gestor.</div>;
   }
 
   return (
@@ -105,34 +105,49 @@ export default function Rastreamento() {
           <h1 className="text-xl font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>Rastreamento em Tempo Real</h1>
           <p className="text-muted-foreground text-xs mt-0.5 flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />Ao vivo — Atualizado às {lastUpdate.toLocaleTimeString("pt-BR")}</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full"><Wifi size={12} /> GPS simulado ativo — {activeViaturas.length} viaturas</div>
+        <div className="flex items-center gap-2 text-xs text-emerald-400 px-3 py-1.5 rounded-full"
+          style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.22)" }}>
+          <Wifi size={12} /> GPS simulado ativo — {activeViaturas.length} viaturas
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4" style={{ minHeight: 520 }}>
-        <div className="lg:col-span-3 bg-card border border-border rounded-xl overflow-hidden relative" style={{ minHeight: 520 }}>
+        <div className="lg:col-span-3 rounded-xl overflow-hidden relative" style={{ minHeight: 520, border: "1px solid rgba(148,163,184,0.11)" }}>
           <div ref={containerRef} className="w-full h-full" style={{ minHeight: 520 }} />
         </div>
 
         <div className="space-y-2 overflow-y-auto max-h-[520px]">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider px-1">Viaturas ativas</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] px-1">Viaturas ativas</p>
           {activeViaturas.map((item) => {
             const pos = positions[item.id];
             const active = item.id === selected;
             return (
-              <button key={item.id} onClick={() => setSelected(item.id === selected ? null : item.id)} className={`w-full text-left p-3 rounded-lg border transition-colors ${active ? "border-primary/50 bg-primary/10" : "border-border bg-card hover:border-border/80"}`}>
-                <div className="flex items-center justify-between mb-1"><span className="mono font-bold text-sm" style={{ fontFamily: "DM Mono, monospace", color: active ? "#60a5fa" : "#e2e8f0" }}>V-{item.numero}</span><span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /></div>
+              <button key={item.id} onClick={() => setSelected(item.id === selected ? null : item.id)}
+                className="w-full text-left p-3 rounded-xl transition-all duration-200"
+                style={active
+                  ? { background: "rgba(37,117,245,0.12)", border: "1px solid rgba(37,117,245,0.35)", boxShadow: "0 4px 14px rgba(37,117,245,0.15)" }
+                  : { background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }
+                }
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-sm" style={{ fontFamily: "DM Mono, monospace", color: active ? "#60a5fa" : "#e2e8f0" }}>V-{item.numero}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                </div>
                 <p className="text-xs text-muted-foreground">{item.modelo}</p>
                 <p className="text-xs text-muted-foreground">{item.placa}</p>
-                {pos && <p className="mono text-xs mt-1" style={{ fontFamily: "DM Mono, monospace", color: "#64748b" }}>{pos.lat.toFixed(4)}, {pos.lng.toFixed(4)}</p>}
-                <p className="mono text-xs" style={{ fontFamily: "DM Mono, monospace", color: "#f59e0b" }}>{item.velocidade} km/h</p>
+                {pos && <p className="text-xs mt-1" style={{ fontFamily: "DM Mono, monospace", color: "#64748b" }}>{pos.lat.toFixed(4)}, {pos.lng.toFixed(4)}</p>}
+                <p className="text-xs" style={{ fontFamily: "DM Mono, monospace", color: "#f59e0b" }}>{item.velocidade} km/h</p>
               </button>
             );
           })}
 
-          <p className="text-xs text-muted-foreground uppercase tracking-wider px-1 pt-2">Fora de serviço</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] px-1 pt-2">Fora de serviço</p>
           {viaturas.filter((item) => item.status !== "operação").map((item) => (
-            <div key={item.id} className="p-3 rounded-lg border border-border bg-card opacity-50">
-              <div className="flex items-center justify-between mb-1"><span className="mono font-bold text-sm" style={{ fontFamily: "DM Mono, monospace" }}>V-{item.numero}</span><WifiOff size={11} className="text-muted-foreground" /></div>
+            <div key={item.id} className="p-3 rounded-xl opacity-50" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-sm" style={{ fontFamily: "DM Mono, monospace" }}>V-{item.numero}</span>
+                <WifiOff size={11} className="text-muted-foreground" />
+              </div>
               <p className="text-xs text-muted-foreground">{item.modelo}</p>
               <span className={`text-xs capitalize ${item.status === "manutenção" ? "text-amber-400" : "text-red-400"}`}>{item.status}</span>
             </div>
@@ -141,11 +156,14 @@ export default function Rastreamento() {
       </div>
 
       {selectedViatura && positions[selectedViatura.id] && (
-        <div className="bg-card border border-primary/30 rounded-lg p-4">
+        <div className="rounded-xl p-4" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(37,117,245,0.3)", boxShadow: "0 4px 16px rgba(37,117,245,0.1)" }}>
           <div className="flex items-center gap-2 mb-3"><Navigation size={14} className="text-primary" /><h3 className="font-semibold text-foreground text-sm" style={{ fontFamily: "Roboto Slab, serif" }}>Viatura {selectedViatura.numero} — {selectedViatura.modelo}</h3></div>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
             {[ ["Placa", selectedViatura.placa], ["Unidade", selectedViatura.unidade], ["Velocidade", `${selectedViatura.velocidade} km/h`], ["KM", selectedViatura.km.toLocaleString("pt-BR")], ["Última atualiz.", lastUpdate.toLocaleTimeString("pt-BR")] ].map(([key, value]) => (
-              <div key={String(key)}><p className="text-xs text-muted-foreground mb-0.5">{key}</p><p className="text-foreground font-medium mono text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{value}</p></div>
+              <div key={String(key)}>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-0.5">{key}</p>
+                <p className="text-foreground font-medium text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{value}</p>
+              </div>
             ))}
           </div>
         </div>

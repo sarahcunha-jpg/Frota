@@ -71,7 +71,11 @@ export default function ManutencaoPreventiva() {
           <p className="text-muted-foreground text-xs mt-0.5">Plano de revisões, agendamentos simples por data/KM e alertas visuais</p>
         </div>
         {canManage && (
-          <button onClick={openNew} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98] transition-all duration-200">
+          <button onClick={openNew} className="flex items-center gap-2 text-white px-4 py-2 rounded-lg text-sm font-medium active:scale-[0.98] transition-all duration-200"
+            style={{ background: "linear-gradient(135deg,#2575f5,#4f8dff)", boxShadow: "0 4px 14px rgba(37,117,245,0.4)" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 20px rgba(37,117,245,0.55)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 14px rgba(37,117,245,0.4)"; }}
+          >
             <Plus size={15} /> Novo item
           </button>
         )}
@@ -80,48 +84,53 @@ export default function ManutencaoPreventiva() {
       <div className="flex gap-3 flex-wrap items-center">
         <div>
           <label className="text-xs text-muted-foreground mr-2">Viatura:</label>
-          <select value={selectedViatura} onChange={(event) => setSelectedViatura(event.target.value)} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary/50">
+          <select value={selectedViatura} onChange={(event) => setSelectedViatura(event.target.value)}
+            className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none transition-all duration-200"
+            style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.15)" }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(37,117,245,0.5)"; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(148,163,184,0.15)"; }}
+          >
             {viaturas.map((item) => <option key={item.id} value={item.id}>{item.numero} – {item.placa} {item.modelo}</option>)}
           </select>
         </div>
         <div className="flex gap-2 ml-auto flex-wrap">
           {Object.entries(STATUS_CONFIG).map(([key, config]) => (
-            <div key={key} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs ${config.bg} ${config.color}`}>
-              <config.icon size={12} />
+            <div key={key} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs ${config.bg} ${config.color}`}>
+              <config.icon size={11} />
               <span>{config.label}</span>
-              <span className="font-bold">{counts[key as keyof typeof counts]}</span>
+              <span className="font-bold ml-0.5">{counts[key as keyof typeof counts]}</span>
             </div>
           ))}
         </div>
       </div>
 
       {viatura && (
-        <div className="bg-card border border-border rounded-lg p-4 flex items-center gap-6 flex-wrap">
+        <div className="rounded-xl p-4 flex items-center gap-6 flex-wrap" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>
           <div>
-            <p className="text-xs text-muted-foreground">Viatura</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">Viatura</p>
             <p className="font-semibold text-foreground">{viatura.numero} – {viatura.modelo}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Placa</p>
-            <p className="font-semibold mono" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.placa}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">Placa</p>
+            <p className="font-semibold" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.placa}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">KM Atual</p>
-            <p className="font-semibold mono" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.km.toLocaleString("pt-BR")}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">KM Atual</p>
+            <p className="font-semibold" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.km.toLocaleString("pt-BR")}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Próxima revisão</p>
-            <p className="font-semibold mono" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.proximaRevisao || "—"}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">Próxima revisão</p>
+            <p className="font-semibold" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.proximaRevisao || "—"}</p>
           </div>
         </div>
       )}
 
-      <div className="bg-card border border-border rounded-lg overflow-hidden">
+      <div className="rounded-xl overflow-hidden shadow-lg shadow-black/30" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border">
+            <tr style={{ borderBottom: "1px solid rgba(148,163,184,0.09)", background: "rgba(255,255,255,0.02)" }}>
               {["Item de Manutenção", "Frequência", "Última Data", "Último KM", "Próxima Data", "Próximo KM", "Status", ""].map((header) => (
-                <th key={header} className="text-left text-xs text-muted-foreground font-medium px-4 py-3 uppercase tracking-wider whitespace-nowrap">{header}</th>
+                <th key={header} className="text-left text-[10px] text-muted-foreground font-semibold px-4 py-3 uppercase tracking-[0.1em] whitespace-nowrap">{header}</th>
               ))}
             </tr>
           </thead>
@@ -129,22 +138,27 @@ export default function ManutencaoPreventiva() {
             {items.map((item, index) => {
               const config = STATUS_CONFIG[item.status];
               return (
-                <tr key={item.id} className={`border-b border-border/50 hover:bg-muted/20 transition-colors ${index % 2 === 0 ? "" : "bg-muted/10"}`}>
+                <tr key={item.id} className="transition-all duration-150"
+                  style={{ borderBottom: "1px solid rgba(148,163,184,0.07)", background: index % 2 !== 0 ? "rgba(255,255,255,0.012)" : "" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.025)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = index % 2 !== 0 ? "rgba(255,255,255,0.012)" : ""; }}
+                >
                   <td className="px-4 py-3 text-foreground font-medium">{item.item}</td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">{item.frequencia}</td>
-                  <td className="px-4 py-3 mono text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.ultimaData || "—"}</td>
-                  <td className="px-4 py-3 mono text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.ultimoKm ? `${item.ultimoKm.toLocaleString("pt-BR")} km` : "—"}</td>
-                  <td className="px-4 py-3 mono text-xs" style={{ fontFamily: "DM Mono, monospace", color: item.status === "vencida" ? "#f87171" : item.status === "alerta" ? "#fbbf24" : "#94a3b8" }}>{item.proximaData || "—"}</td>
-                  <td className="px-4 py-3 mono text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.proximoKm ? `${item.proximoKm.toLocaleString("pt-BR")} km` : "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.ultimaData || "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.ultimoKm ? `${item.ultimoKm.toLocaleString("pt-BR")} km` : "—"}</td>
+                  <td className="px-4 py-3 text-xs" style={{ fontFamily: "DM Mono, monospace", color: item.status === "vencida" ? "#f87171" : item.status === "alerta" ? "#fbbf24" : "#94a3b8" }}>{item.proximaData || "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.proximoKm ? `${item.proximoKm.toLocaleString("pt-BR")} km` : "—"}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs border ${config.bg} ${config.color}`}>
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs border ${config.bg} ${config.color}`}>
                       <config.icon size={10} /> {config.label}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     {canManage && (
-                      <button onClick={() => openEdit(item)} className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
-                        <Edit2 size={12} /> Editar
+                      <button onClick={() => openEdit(item)} className="text-xs text-primary inline-flex items-center gap-1 px-2 py-1 rounded-lg transition-all hover:bg-primary/10"
+                        style={{ border: "1px solid rgba(37,117,245,0.2)" }}>
+                        <Edit2 size={11} /> Editar
                       </button>
                     )}
                   </td>
@@ -156,36 +170,46 @@ export default function ManutencaoPreventiva() {
       </div>
 
       {modal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-xl w-full max-w-lg shadow-2xl animate-frota-slide-up">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}>
+          <div className="w-full max-w-lg shadow-2xl animate-frota-scale-in" style={{ background: "#0f1a2e", border: "1px solid rgba(148,163,184,0.14)", borderRadius: "1rem" }}>
+            <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid rgba(148,163,184,0.1)" }}>
               <h2 className="font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>{editing ? "Editar item preventivo" : "Novo item de manutenção"}</h2>
-              <button onClick={() => setModal(false)} className="text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-md p-0.5 transition-all duration-150"><X size={18} /></button>
+              <button onClick={() => setModal(false)} className="text-muted-foreground hover:text-foreground rounded-lg p-1 transition-all hover:bg-white/5"><X size={18} /></button>
             </div>
             <div className="p-6 grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1.5 block">item</label>
+                <label className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-1.5 block">item</label>
                 <select value={`${form.item}|||${form.frequencia}`} onChange={(event) => {
                   const [item, frequencia] = event.target.value.split("|||");
                   setForm((current) => ({ ...current, item, frequencia }));
-                }} className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:shadow-[0_0_0_3px_rgba(29,108,240,0.1)] transition-all duration-200">
+                }} className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none"
+                  style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }}>
                   {seedOptions.map((option) => <option key={option.item} value={`${option.item}|||${option.frequencia}`}>{option.item} — {option.frequencia}</option>)}
                 </select>
               </div>
               <div className="col-span-2">
-                <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1.5 block">frequência</label>
-                <input value={form.frequencia} onChange={(event) => setForm((current) => ({ ...current, frequencia: event.target.value }))} className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:shadow-[0_0_0_3px_rgba(29,108,240,0.1)] transition-all duration-200" />
+                <label className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-1.5 block">frequência</label>
+                <input value={form.frequencia} onChange={(event) => setForm((current) => ({ ...current, frequencia: event.target.value }))}
+                  className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none"
+                  style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }} />
               </div>
               {[ ["Última Data", "ultimaData", "date"], ["Último KM", "ultimoKm", "number"], ["Próxima Data", "proximaData", "date"], ["Próximo KM", "proximoKm", "number"] ].map(([label, key, type]) => (
                 <div key={String(key)}>
-                  <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1.5 block">{label}</label>
-                  <input type={type as string} value={form[key as keyof typeof form]} onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))} className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:shadow-[0_0_0_3px_rgba(29,108,240,0.1)] transition-all duration-200" />
+                  <label className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-1.5 block">{label}</label>
+                  <input type={type as string} value={form[key as keyof typeof form]} onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
+                    className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none"
+                    style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }} />
                 </div>
               ))}
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
-              <button onClick={() => setModal(false)} className="px-4 py-2 rounded-md text-sm text-muted-foreground border border-border hover:border-foreground/20 hover:bg-muted/20 transition-all duration-200">Cancelar</button>
-              <button onClick={handleSave} className="px-4 py-2 rounded-md text-sm bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:shadow-primary/25 font-medium transition-all duration-200 active:scale-[0.98]">Salvar</button>
+            <div className="flex justify-end gap-3 px-6 py-4" style={{ borderTop: "1px solid rgba(148,163,184,0.1)" }}>
+              <button onClick={() => setModal(false)} className="px-4 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-all"
+                style={{ border: "1px solid rgba(148,163,184,0.15)" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ""; }}
+              >Cancelar</button>
+              <button onClick={handleSave} className="px-4 py-2 rounded-lg text-sm text-white font-semibold active:scale-[0.98] transition-all"
+                style={{ background: "linear-gradient(135deg,#2575f5,#4f8dff)", boxShadow: "0 4px 14px rgba(37,117,245,0.35)" }}>Salvar</button>
             </div>
           </div>
         </div>
