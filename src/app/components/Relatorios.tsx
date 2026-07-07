@@ -90,9 +90,20 @@ export default function Relatorios() {
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         {RELATORIOS.map((item) => (
-          <button key={item.id} onClick={() => setSelected(item.id === selected ? null : item.id)} className={`flex items-start gap-3 p-4 rounded-lg border text-left transition-colors ${selected === item.id ? "border-primary/50 bg-primary/10" : "border-border bg-card hover:border-border/80"}`}>
-            <item.icon size={16} className={selected === item.id ? "text-primary mt-0.5" : "text-muted-foreground mt-0.5"} />
-            <div><p className={`font-medium text-sm mb-0.5 ${selected === item.id ? "text-primary" : "text-foreground"}`}>{item.label}</p><p className="text-muted-foreground text-xs">{item.desc}</p></div>
+          <button key={item.id} onClick={() => setSelected(item.id === selected ? null : item.id)}
+            className="flex items-start gap-3 p-4 rounded-xl text-left transition-all duration-200"
+            style={selected === item.id
+              ? { background: "rgba(37,117,245,0.12)", border: "1px solid rgba(37,117,245,0.4)", boxShadow: "0 4px 16px rgba(37,117,245,0.15)" }
+              : { background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }
+            }
+            onMouseEnter={(e) => { if (selected !== item.id) (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.22)"; }}
+            onMouseLeave={(e) => { if (selected !== item.id) (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.11)"; }}
+          >
+            <item.icon size={16} className={`mt-0.5 ${selected === item.id ? "text-primary" : "text-muted-foreground"}`} />
+            <div>
+              <p className={`font-medium text-sm mb-0.5 ${selected === item.id ? "text-primary" : "text-foreground"}`}>{item.label}</p>
+              <p className="text-muted-foreground text-xs">{item.desc}</p>
+            </div>
           </button>
         ))}
       </div>
@@ -100,28 +111,70 @@ export default function Relatorios() {
       {selected && report && (
         <>
           <div className="flex items-center gap-4 flex-wrap">
-            <div className="flex items-center gap-2"><label className="text-xs text-muted-foreground">De:</label><input type="date" value={periodo.inicio} onChange={(event) => setPeriodo((current) => ({ ...current, inicio: event.target.value }))} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary/50" /></div>
-            <div className="flex items-center gap-2"><label className="text-xs text-muted-foreground">Até:</label><input type="date" value={periodo.fim} onChange={(event) => setPeriodo((current) => ({ ...current, fim: event.target.value }))} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary/50" /></div>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-muted-foreground">De:</label>
+              <input type="date" value={periodo.inicio} onChange={(event) => setPeriodo((current) => ({ ...current, inicio: event.target.value }))}
+                className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none"
+                style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.15)" }} />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-muted-foreground">Até:</label>
+              <input type="date" value={periodo.fim} onChange={(event) => setPeriodo((current) => ({ ...current, fim: event.target.value }))}
+                className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none"
+                style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.15)" }} />
+            </div>
             {selected === "historico" && (
-              <div className="flex items-center gap-2"><label className="text-xs text-muted-foreground">Viatura:</label><select value={viaturaId} onChange={(event) => setViaturaId(event.target.value)} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary/50">{viaturas.map((item) => <option key={item.id} value={item.id}>{item.numero} – {item.placa}</option>)}</select></div>
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-muted-foreground">Viatura:</label>
+                <select value={viaturaId} onChange={(event) => setViaturaId(event.target.value)}
+                  className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none"
+                  style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.15)" }}>
+                  {viaturas.map((item) => <option key={item.id} value={item.id}>{item.numero} – {item.placa}</option>)}
+                </select>
+              </div>
             )}
             {canExport && (
               <div className="ml-auto flex gap-2">
-                <button onClick={exportCsv} className="flex items-center gap-2 px-4 py-2 rounded-md text-sm border border-border text-muted-foreground hover:text-foreground hover:border-foreground/20 transition-colors"><Download size={13} /> CSV/Excel</button>
-                <button onClick={exportPdf} className="flex items-center gap-2 px-4 py-2 rounded-md text-sm bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium"><Download size={13} /> PDF</button>
+                <button onClick={exportCsv} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-all"
+                  style={{ border: "1px solid rgba(148,163,184,0.15)" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ""; }}
+                ><Download size={13} /> CSV/Excel</button>
+                <button onClick={exportPdf} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-white font-medium transition-all"
+                  style={{ background: "linear-gradient(135deg,#2575f5,#4f8dff)", boxShadow: "0 4px 14px rgba(37,117,245,0.35)" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 20px rgba(37,117,245,0.5)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 14px rgba(37,117,245,0.35)"; }}
+                ><Download size={13} /> PDF</button>
               </div>
             )}
           </div>
 
-          <div className="bg-card border border-border rounded-xl overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <div><h3 className="font-semibold text-foreground text-sm" style={{ fontFamily: "Roboto Slab, serif" }}>{RELATORIOS.find((item) => item.id === selected)?.label}</h3><p className="text-xs text-muted-foreground mt-0.5">Período: {periodo.inicio} a {periodo.fim} · 10º BPM Blumenau/SC</p></div>
+          <div className="rounded-xl overflow-hidden shadow-lg shadow-black/30 animate-frota-slide-up" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>
+            <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: "1px solid rgba(148,163,184,0.09)" }}>
+              <div>
+                <h3 className="font-semibold text-foreground text-sm" style={{ fontFamily: "Roboto Slab, serif" }}>{RELATORIOS.find((item) => item.id === selected)?.label}</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Período: {periodo.inicio} a {periodo.fim} · 10º BPM Blumenau/SC</p>
+              </div>
               <p className="text-xs text-muted-foreground">{report.footer}</p>
             </div>
             <div className="overflow-x-auto p-2">
               <table className="w-full text-xs">
-                <thead><tr className="border-b border-border">{report.headers.map((header) => <th key={header} className="text-left text-muted-foreground px-3 py-2 font-medium">{header}</th>)}</tr></thead>
-                <tbody>{report.rows.map((row, index) => <tr key={`${row[0]}-${index}`} className={`border-b border-border/40 ${index % 2 === 0 ? "" : "bg-muted/10"}`}>{row.map((cell, cellIndex) => <td key={`${cellIndex}-${cell}`} className="px-3 py-2">{cell}</td>)}</tr>)}</tbody>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid rgba(148,163,184,0.09)" }}>
+                    {report.headers.map((header) => <th key={header} className="text-left text-muted-foreground px-3 py-2 font-medium">{header}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {report.rows.map((row, index) => (
+                    <tr key={`${row[0]}-${index}`} className="transition-colors"
+                      style={{ borderBottom: "1px solid rgba(148,163,184,0.06)", background: index % 2 !== 0 ? "rgba(255,255,255,0.012)" : "" }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(37,117,245,0.05)"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = index % 2 !== 0 ? "rgba(255,255,255,0.012)" : ""; }}
+                    >
+                      {row.map((cell, cellIndex) => <td key={`${cellIndex}-${cell}`} className="px-3 py-2">{cell}</td>)}
+                    </tr>
+                  ))}
+                </tbody>
               </table>
               {report.rows.length === 0 && <div className="text-center py-8 text-muted-foreground text-sm">Nenhum dado encontrado para os filtros selecionados.</div>}
             </div>
@@ -129,7 +182,7 @@ export default function Relatorios() {
         </>
       )}
 
-      {selected && !canExport && <div className="text-sm text-muted-foreground bg-card border border-border rounded-lg p-4">Exportações CSV/PDF estão disponíveis apenas para Administrador e Gestor.</div>}
+      {selected && !canExport && <div className="text-sm text-muted-foreground rounded-xl p-4" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>Exportações CSV/PDF estão disponíveis apenas para Administrador e Gestor.</div>}
     </div>
   );
 }
