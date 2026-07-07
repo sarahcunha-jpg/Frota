@@ -15,11 +15,11 @@ function StatCard({
   iconBg: string;
 }) {
   return (
-    <div className="bg-white rounded-xl p-5 flex items-center justify-between shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+    <div className="card flex items-center justify-between">
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{label}</p>
-        <p className="text-3xl font-bold text-gray-900">{value}</p>
-        {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+        <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-1">{label}</p>
+        <p className="text-2xl font-bold text-foreground">{value}</p>
+        {sub && <p className="text-xs text-muted mt-1">{sub}</p>}
       </div>
       <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: iconBg }}>
         <Icon size={20} className="text-white" />
@@ -29,11 +29,11 @@ function StatCard({
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => active && payload?.length ? (
-  <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs shadow-lg">
-    <p className="text-gray-500 mb-1">{label}</p>
+  <div className="card small text-xs">
+    <p className="text-muted mb-1">{label}</p>
     {payload.map((item: any) => (
       <p key={item.name} style={{ color: item.color }}>
-        {item.name}: <span className="text-gray-800 font-medium">{item.value}</span>
+        {item.name}: <span className="text-foreground font-medium">{item.value}</span>
       </p>
     ))}
   </div>
@@ -57,9 +57,7 @@ export default function Dashboard() {
     <div className="space-y-6 animate-frota-slide-up">
 
       {/* Hero banner */}
-      <div className="relative rounded-2xl overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #1f6fff 0%, #1558d4 60%, #1040a8 100%)", minHeight: 160 }}>
-        {/* Watermark icons */}
+      <div className="relative rounded-2xl overflow-hidden" style={{ background: "linear-gradient(135deg, #1f6fff 0%, #1558d4 60%, #1040a8 100%)", minHeight: 160 }}>
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden>
           <Car size={140} className="absolute -right-6 top-1/2 -translate-y-1/2 text-white/10" />
           <Wrench size={90} className="absolute right-32 bottom-0 translate-y-4 text-white/8" />
@@ -110,23 +108,23 @@ export default function Dashboard() {
 
       {/* Maintenance alerts */}
       {(stats.manutencoesVencidas.length > 0 || stats.manutencoesAlerta.length > 0) && (
-        <div className="rounded-xl p-4 animate-frota-slide-up bg-amber-50 border border-amber-200">
+        <div className="card" style={{ background: "rgba(255,249,230,0.9)", border: "1px solid rgba(249,205,116,0.25)" }}>
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle size={15} className="text-amber-500" />
             <span className="text-amber-700 font-semibold text-sm">Alertas de manutenção vencida</span>
           </div>
           <div className="space-y-1.5">
             {stats.manutencoesVencidas.map((item) => (
-              <div key={item.id} className="flex items-center gap-2 text-xs">
+              <div key={item.id} className="flex items-center gap-2 text-sm">
                 <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
-                <span className="text-gray-800">{item.item}</span>
+                <span className="text-foreground">{item.item}</span>
                 <span className="text-red-500 ml-auto">Vencida em {item.proximaData || "data não informada"}</span>
               </div>
             ))}
             {stats.manutencoesAlerta.map((item) => (
-              <div key={item.id} className="flex items-center gap-2 text-xs">
+              <div key={item.id} className="flex items-center gap-2 text-sm">
                 <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
-                <span className="text-gray-800">{item.item}</span>
+                <span className="text-foreground">{item.item}</span>
                 <span className="text-amber-600 ml-auto">Vence em {item.proximaData || "data não informada"}</span>
               </div>
             ))}
@@ -136,9 +134,9 @@ export default function Dashboard() {
 
       {/* Charts row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div className="card">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-semibold text-gray-800">Status da Frota</h3>
+            <h3 className="text-sm font-semibold text-foreground">Status da Frota</h3>
           </div>
           <ResponsiveContainer width="100%" height={180}>
             <PieChart>
@@ -150,20 +148,20 @@ export default function Dashboard() {
           </ResponsiveContainer>
           <div className="space-y-2 mt-2">
             {pieData.map((item, index) => (
-              <div key={item.name} className="flex items-center justify-between text-xs">
+              <div key={item.name} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: COLORS[index] }} />
-                  <span className="text-gray-500">{item.name}</span>
+                  <span className="text-muted">{item.name}</span>
                 </div>
-                <span className="text-gray-800 font-semibold">{item.value}</span>
+                <span className="text-foreground font-semibold">{item.value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div className="card">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-semibold text-gray-800">Custos Mensais (R$)</h3>
+            <h3 className="text-sm font-semibold text-foreground">Custos Mensais (R$)</h3>
           </div>
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={maintenanceSeries}>
@@ -179,10 +177,10 @@ export default function Dashboard() {
 
       {/* Charts row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div className="card">
           <div className="flex items-center gap-2 mb-5">
             <TrendingUp size={14} className="text-primary" />
-            <h3 className="text-sm font-semibold text-gray-800">Disponibilidade da frota (%)</h3>
+            <h3 className="text-sm font-semibold text-foreground">Disponibilidade da frota (%)</h3>
           </div>
           <ResponsiveContainer width="100%" height={140}>
             <AreaChart data={availabilitySeries}>
@@ -201,10 +199,10 @@ export default function Dashboard() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div className="card">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-semibold text-gray-800">Manutenções por mês</h3>
-            <span className="text-xs text-gray-400">Histórico consolidado</span>
+            <h3 className="text-sm font-semibold text-foreground">Manutenções por mês</h3>
+            <span className="text-xs text-muted">Histórico consolidado</span>
           </div>
           <ResponsiveContainer width="100%" height={140}>
             <BarChart data={maintenanceSeries} barGap={4}>
