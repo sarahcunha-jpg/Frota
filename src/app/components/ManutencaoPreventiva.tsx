@@ -96,7 +96,7 @@ export default function ManutencaoPreventiva() {
       </div>
 
       {viatura && (
-        <div className="bg-card border border-border rounded-lg p-4 flex items-center gap-6 flex-wrap">
+        <div className="border border-border rounded-xl p-4 flex items-center gap-6 flex-wrap" style={{ background: "linear-gradient(135deg, #0f1a2e 0%, #0b1422 100%)" }}>
           <div>
             <p className="text-xs text-muted-foreground">Viatura</p>
             <p className="font-semibold text-foreground">{viatura.numero} – {viatura.modelo}</p>
@@ -116,12 +116,12 @@ export default function ManutencaoPreventiva() {
         </div>
       )}
 
-      <div className="bg-card border border-border rounded-lg overflow-hidden">
+      <div className="rounded-xl border border-border overflow-hidden" style={{ background: "linear-gradient(180deg, #0f1a2e 0%, #0b1422 100%)" }}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border">
+            <tr className="border-b border-border" style={{ background: "rgba(45,120,245,0.04)" }}>
               {["Item de Manutenção", "Frequência", "Última Data", "Último KM", "Próxima Data", "Próximo KM", "Status", ""].map((header) => (
-                <th key={header} className="text-left text-xs text-muted-foreground font-medium px-4 py-3 uppercase tracking-wider whitespace-nowrap">{header}</th>
+                <th key={header} className="text-left text-xs text-muted-foreground font-semibold px-4 py-3 uppercase tracking-wider whitespace-nowrap">{header}</th>
               ))}
             </tr>
           </thead>
@@ -129,7 +129,7 @@ export default function ManutencaoPreventiva() {
             {items.map((item, index) => {
               const config = STATUS_CONFIG[item.status];
               return (
-                <tr key={item.id} className={`border-b border-border/50 hover:bg-muted/20 transition-colors ${index % 2 === 0 ? "" : "bg-muted/10"}`}>
+                <tr key={item.id} className={`border-b border-border/40 transition-colors duration-150 hover:bg-primary/[0.05] ${index % 2 === 0 ? "" : "bg-white/[0.015]"}`}>
                   <td className="px-4 py-3 text-foreground font-medium">{item.item}</td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">{item.frequencia}</td>
                   <td className="px-4 py-3 mono text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.ultimaData || "—"}</td>
@@ -137,13 +137,13 @@ export default function ManutencaoPreventiva() {
                   <td className="px-4 py-3 mono text-xs" style={{ fontFamily: "DM Mono, monospace", color: item.status === "vencida" ? "#f87171" : item.status === "alerta" ? "#fbbf24" : "#94a3b8" }}>{item.proximaData || "—"}</td>
                   <td className="px-4 py-3 mono text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.proximoKm ? `${item.proximoKm.toLocaleString("pt-BR")} km` : "—"}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs border ${config.bg} ${config.color}`}>
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs border ${config.bg} ${config.color}`}>
                       <config.icon size={10} /> {config.label}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     {canManage && (
-                      <button onClick={() => openEdit(item)} className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
+                      <button onClick={() => openEdit(item)} className="text-xs text-primary inline-flex items-center gap-1 hover:underline transition-colors duration-150 hover:text-primary/80">
                         <Edit2 size={12} /> Editar
                       </button>
                     )}
@@ -156,11 +156,11 @@ export default function ManutencaoPreventiva() {
       </div>
 
       {modal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-xl w-full max-w-lg shadow-2xl animate-frota-slide-up">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="border border-border rounded-2xl w-full max-w-lg shadow-2xl animate-frota-scale-in" style={{ background: "linear-gradient(135deg, #0f1a2e 0%, #0b1422 100%)", boxShadow: "0 32px 80px rgba(0,0,0,0.60), 0 0 0 1px rgba(45,120,245,0.10)" }}>
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>{editing ? "Editar item preventivo" : "Novo item de manutenção"}</h2>
-              <button onClick={() => setModal(false)} className="text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-md p-0.5 transition-all duration-150"><X size={18} /></button>
+              <button onClick={() => setModal(false)} className="text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-lg p-1 transition-all duration-150"><X size={18} /></button>
             </div>
             <div className="p-6 grid grid-cols-2 gap-4">
               <div className="col-span-2">

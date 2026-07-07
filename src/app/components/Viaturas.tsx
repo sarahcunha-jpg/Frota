@@ -125,40 +125,40 @@ export default function Viaturas() {
         ))}
       </div>
 
-      <div className="bg-card border border-border rounded-lg overflow-hidden shadow-sm">
+      <div className="rounded-xl border border-border overflow-hidden shadow-sm" style={{ background: "linear-gradient(180deg, #0f1a2e 0%, #0b1422 100%)" }}>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border bg-muted/10">
+              <tr className="border-b border-border" style={{ background: "rgba(45,120,245,0.04)" }}>
                 {["Nº", "Placa", "Modelo", "Ano", "KM", "Unidade", "Status", "Próx. Revisão", "Ações"].map((header) => (
-                  <th key={header} className="text-left text-xs text-muted-foreground font-medium px-4 py-3 uppercase tracking-wider whitespace-nowrap">{header}</th>
+                  <th key={header} className="text-left text-xs text-muted-foreground font-semibold px-4 py-3 uppercase tracking-wider whitespace-nowrap">{header}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.map((viatura, index) => (
-                <tr key={viatura.id} className={`border-b border-border/50 hover:bg-primary/5 hover:border-border transition-all duration-150 ${index % 2 === 0 ? "" : "bg-muted/10"}`}>
-                  <td className="px-4 py-3 font-medium text-foreground mono" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.numero}</td>
+                <tr key={viatura.id} className={`border-b border-border/40 transition-all duration-150 hover:bg-primary/[0.06] ${index % 2 === 0 ? "" : "bg-white/[0.015]"}`}>
+                  <td className="px-4 py-3 font-semibold text-foreground mono" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.numero}</td>
                   <td className="px-4 py-3 mono text-foreground" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.placa}</td>
                   <td className="px-4 py-3 text-foreground">{viatura.modelo}</td>
                   <td className="px-4 py-3 text-muted-foreground">{viatura.ano}</td>
                   <td className="px-4 py-3 mono text-muted-foreground" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.km.toLocaleString("pt-BR")} km</td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">{viatura.unidade}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex px-2 py-0.5 rounded text-xs border capitalize ${STATUS_COLORS[viatura.status]}`}>{viatura.status}</span>
+                    <span className={`inline-flex px-2 py-0.5 rounded-md text-xs border capitalize ${STATUS_COLORS[viatura.status]}`}>{viatura.status}</span>
                   </td>
                   <td className="px-4 py-3 mono text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.proximaRevisao || "—"}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 flex-wrap">
-                      <button onClick={() => { setSelected(viatura); setModal("view"); }} className="px-2 py-1 rounded border border-border text-xs text-muted-foreground hover:text-foreground hover:border-foreground/20 hover:bg-muted/30 transition-all duration-150 inline-flex items-center gap-1">
+                      <button onClick={() => { setSelected(viatura); setModal("view"); }} className="px-2 py-1 rounded-md border border-border text-xs text-muted-foreground hover:text-foreground hover:border-foreground/20 hover:bg-muted/30 transition-all duration-150 inline-flex items-center gap-1">
                         <Eye size={12} /> Visualizar
                       </button>
                       {canManage && (
                         <>
-                          <button onClick={() => openEdit(viatura)} className="px-2 py-1 rounded border border-primary/20 text-xs text-primary hover:bg-primary/10 hover:border-primary/40 transition-all duration-150 inline-flex items-center gap-1">
+                          <button onClick={() => openEdit(viatura)} className="px-2 py-1 rounded-md border border-primary/20 text-xs text-primary hover:bg-primary/10 hover:border-primary/40 transition-all duration-150 inline-flex items-center gap-1">
                             <Edit2 size={12} /> Editar
                           </button>
-                          <button onClick={() => deleteViatura(viatura.id)} className="px-2 py-1 rounded border border-red-500/20 text-xs text-red-400 hover:bg-red-500/10 hover:border-red-500/40 transition-all duration-150 inline-flex items-center gap-1">
+                          <button onClick={() => deleteViatura(viatura.id)} className="px-2 py-1 rounded-md border border-red-500/20 text-xs text-red-400 hover:bg-red-500/10 hover:border-red-500/40 transition-all duration-150 inline-flex items-center gap-1">
                             <Trash2 size={12} /> Excluir
                           </button>
                         </>
@@ -174,13 +174,13 @@ export default function Viaturas() {
       </div>
 
       {modal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-xl w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto animate-frota-slide-up">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="border border-border rounded-2xl w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto animate-frota-scale-in" style={{ background: "linear-gradient(135deg, #0f1a2e 0%, #0b1422 100%)", boxShadow: "0 32px 80px rgba(0,0,0,0.60), 0 0 0 1px rgba(45,120,245,0.10)" }}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0" style={{ background: "linear-gradient(135deg, #0f1a2e 0%, #0b1422 100%)" }}>
               <h2 className="font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>
                 {modal === "add" ? "Criar viatura" : modal === "edit" ? "Editar viatura" : "Visualizar viatura"}
               </h2>
-              <button onClick={() => setModal(null)} className="text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-md p-0.5 transition-all duration-150"><X size={18} /></button>
+              <button onClick={() => setModal(null)} className="text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-lg p-1 transition-all duration-150"><X size={18} /></button>
             </div>
 
             {modal === "view" && selected ? (
