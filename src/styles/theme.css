@@ -130,11 +130,10 @@
     font-size: var(--font-size);
     scroll-behavior: smooth;
   }
- body {
-  @apply bg-background text-foreground antialiased;
-  background: var(--background); /* remove gradiente escuro */
-  font-family: 'Inter', sans-serif;
-}
+  body {
+    @apply bg-background text-foreground antialiased;
+    background: var(--background);
+    font-family: 'Inter', sans-serif;
   }
   h1, h2, h3, h4 {
     font-family: 'Roboto Slab', serif;
