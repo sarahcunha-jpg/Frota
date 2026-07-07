@@ -1,0 +1,10 @@
+.vehicle-card .vehicle-row { 
+  gap: 12px;
+}
+.vehicle-plate {
+  font-size: 0.95rem;
+}
+.vehicle-model {
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
