@@ -1,23 +1,23 @@
 :root{
-  /* Tipografia */
+  /* Design tokens (new) */
   --font-primary: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   --font-size-base: 16px;
   --line-height-base: 1.45;
 
-  /* Paleta principal (exemplo novo) */
+  /* Palette */
   --brand-50: #eef6ff;
   --brand-100: #d6eaff;
   --brand-300: #74a8ff;
-  --brand-500: #1f6fff; /* primary CTA */
+  --brand-500: #1f6fff;
   --brand-700: #0b4ed6;
 
-  /* Accents / statuses */
+  /* Status */
   --success: #18b26b;
   --warning: #ffb020;
   --danger: #ff4d4f;
   --muted: #6b7280;
 
-  /* Backgrounds & surfaces */
+  /* Surfaces */
   --bg: #f5f7fb;
   --surface: #ffffff;
   --surface-quiet: #f2f4f8;
@@ -37,4 +37,79 @@
   /* Buttons */
   --btn-padding-y: 10px;
   --btn-padding-x: 16px;
+
+  /* Legacy compatibility mapping (used by Tailwind/utility classes in the app)
+     These map the old variable names used across the codebase to the new tokens above.
+  */
+  --background: var(--bg);
+  --foreground: #0f172a;
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --primary: var(--brand-500);
+  --primary-foreground: #ffffff;
+  --secondary: var(--brand-100);
+  --secondary-foreground: var(--muted);
+  --muted: var(--surface-quiet);
+  --muted-foreground: var(--muted);
+  --accent: var(--warning);
+  --accent-foreground: #111827;
+  --destructive: var(--danger);
+  --destructive-foreground: #ffffff;
+  --color-border: var(--border);
+  --input: var(--surface);
+  --input-background: var(--surface);
+  --switch-background: rgba(203,213,225,0.8);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: var(--brand-500);
+  --chart-1: var(--brand-500);
+  --chart-2: #10b981;
+  --chart-3: var(--warning);
+  --chart-4: var(--danger);
+  --chart-5: #8b5cf6;
+  --radius: var(--radius-md);
+  --sidebar: var(--surface);
+  --sidebar-foreground: #334155;
+  --sidebar-primary: var(--brand-500);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--surface-quiet);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--brand-500);
 }
+
+/* Dark mode fallback: maintain same tokens but allow overriding with .dark if project uses it */
+.dark{
+  --background: #081124;
+  --foreground: #e6eefc;
+  --card: #0f1724;
+  --card-foreground: #e6eefc;
+  --popover: #0f1724;
+  --popover-foreground: #e6eefc;
+  --primary: #2b7cff;
+  --primary-foreground: #ffffff;
+  --muted: #0b1220;
+}
+
+/* Small set of utility classes to style header/sidebar/panel consistently if inline styles exist */
+.header-brand {
+  display:flex;
+  align-items:center;
+  gap:0.75rem;
+}
+.header-brand .logo-box{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--brand-500),var(--brand-300));color:white;
+}
+
+/* Generic surface styles used by main layout */
+.app-bg { background: var(--background); }
+.surface { background: var(--card); color: var(--card-foreground); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+
+/* Sidebar helpers (apply to existing sidebar markup) */
+.sidebar-surface{ background: var(--sidebar); color: var(--sidebar-foreground); border-right: 1px solid var(--sidebar-border); }
+.sidebar-item-active{ background: linear-gradient(90deg, rgba(31,111,255,0.08), rgba(31,111,255,0.03)); color: var(--sidebar-primary); font-weight:600; box-shadow: 0 6px 18px rgba(15,23,42,0.04); }
+
+/* Simple hero background pattern fallback */
+.hero-pattern{ background-image: url('/assets/hero-pattern.svg'); background-repeat:no-repeat; background-position:right center; }
