@@ -38,3 +38,28 @@
   --btn-padding-y: 10px;
   --btn-padding-x: 16px;
 }
+
+/* App helpers */
+.app-root{ font-family: var(--font-primary); background: var(--bg); }
+.input-surface{ background: #fff; border: 1px solid var(--border); }
+.btn-primary{ background: linear-gradient(135deg,var(--brand-500),var(--brand-300)); color: #fff; padding: 10px 14px; border-radius: 8px; box-shadow: 0 6px 18px rgba(31,111,255,0.12); }
+.btn-ghost{ background: transparent; color: var(--muted); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(15,23,42,0.04); }
+.btn-ghost-active{ background: rgba(31,111,255,0.08); color: var(--brand-700); border: 1px solid rgba(31,111,255,0.12); }
+.icon-btn{ display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; border:1px solid rgba(15,23,42,0.04); background:transparent; transition:background .15s; }
+.icon-btn:hover{ background: rgba(0,0,0,0.03); }
+.icon-btn.text-red{ border-color: rgba(255,77,79,0.12); }
+
+/* Vehicle list styles */
+.vehicle-list{ display:flex; flex-direction:column; gap:12px; }
+.vehicle-card{ display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:12px; background: var(--surface); border:1px solid var(--border); box-shadow: var(--shadow-sm); }
+.vehicle-icon{ background: linear-gradient(135deg,var(--brand-500),var(--brand-300)); color: #fff; width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+.vehicle-plate{ font-weight:700; font-size:0.95rem; }
+.vehicle-model{ font-size:0.85rem; margin-top:4px; color:var(--muted); }
+.badge{ display:inline-block; padding:6px 10px; border-radius:999px; font-size:13px; }
+
+/* Modal helpers */
+.modal-overlay{ background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); }
+.modal-panel{ background: var(--surface); border:1px solid var(--border); border-radius:12px; }
+.modal-header{ border-bottom:1px solid rgba(15,23,42,0.04); }
+.modal-actions .btn-ghost{ border:1px solid rgba(15,23,42,0.04); }
+
