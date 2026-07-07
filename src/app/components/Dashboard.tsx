@@ -7,8 +7,8 @@ const COLORS = ["#1d6cf0", "#10b981", "#ef4444"];
 
 function StatCard({ label, value, sub, icon: Icon, color }: { label: string; value: string | number; sub: string; icon: React.ComponentType<{ size?: number; className?: string }>; color: string; }) {
   return (
-    <div className="bg-card rounded-lg border border-border p-5 flex items-start gap-4">
-      <div className={`p-2.5 rounded-md ${color}`}><Icon size={18} className="text-white" /></div>
+    <div className="bg-card rounded-lg border border-border p-5 flex items-start gap-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/25 hover:border-border/80 transition-all duration-200 cursor-default">
+      <div className={`p-2.5 rounded-md ${color} shadow-sm transition-transform duration-200`}><Icon size={18} className="text-white" /></div>
       <div>
         <p className="text-muted-foreground text-xs uppercase tracking-widest mb-1">{label}</p>
         <p className="text-3xl font-bold text-foreground mono" style={{ fontFamily: "DM Mono, monospace" }}>{value}</p>
@@ -38,7 +38,7 @@ export default function Dashboard() {
   const availabilitySeries = buildAvailabilitySeries(viaturas);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-frota-slide-up">
       <div>
         <h1 className="text-xl font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>Dashboard</h1>
         <p className="text-muted-foreground text-xs mt-0.5">Visão geral da frota — 10º BPM Blumenau</p>
@@ -53,7 +53,7 @@ export default function Dashboard() {
       </div>
 
       {(stats.manutencoesVencidas.length > 0 || stats.manutencoesAlerta.length > 0) && (
-        <div className="bg-amber-500/10 border border-amber-500/25 rounded-lg p-4">
+        <div className="bg-amber-500/10 border border-amber-500/25 rounded-lg p-4 hover:bg-amber-500/[0.13] transition-colors duration-200">
           <div className="flex items-center gap-2 mb-3"><AlertTriangle size={15} className="text-amber-400" /><span className="text-amber-400 font-medium text-sm">Alertas de manutenção vencida</span></div>
           <div className="space-y-1.5">
             {stats.manutencoesVencidas.map((item) => (
@@ -67,7 +67,7 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-card border border-border rounded-lg p-5">
+        <div className="lg:col-span-2 bg-card border border-border rounded-lg p-5 hover:shadow-lg hover:shadow-black/20 transition-all duration-200">
           <div className="flex items-center justify-between mb-5"><h3 className="text-sm font-semibold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>Manutenções por mês</h3><span className="text-xs text-muted-foreground">Histórico consolidado</span></div>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={maintenanceSeries} barGap={4}>
@@ -82,7 +82,7 @@ export default function Dashboard() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-5">
+        <div className="bg-card border border-border rounded-lg p-5 hover:shadow-lg hover:shadow-black/20 transition-all duration-200">
           <h3 className="text-sm font-semibold text-foreground mb-5" style={{ fontFamily: "Roboto Slab, serif" }}>Status da frota</h3>
           <ResponsiveContainer width="100%" height={160}>
             <PieChart>
@@ -99,7 +99,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-card border border-border rounded-lg p-5">
+        <div className="bg-card border border-border rounded-lg p-5 hover:shadow-lg hover:shadow-black/20 transition-all duration-200">
           <div className="flex items-center gap-2 mb-5"><TrendingUp size={14} className="text-primary" /><h3 className="text-sm font-semibold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>Disponibilidade da frota (%)</h3></div>
           <ResponsiveContainer width="100%" height={140}>
             <AreaChart data={availabilitySeries}>
@@ -112,7 +112,7 @@ export default function Dashboard() {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div className="bg-card border border-border rounded-lg p-5">
+        <div className="bg-card border border-border rounded-lg p-5 hover:shadow-lg hover:shadow-black/20 transition-all duration-200">
           <h3 className="text-sm font-semibold text-foreground mb-5" style={{ fontFamily: "Roboto Slab, serif" }}>Custos de manutenção</h3>
           <ResponsiveContainer width="100%" height={140}>
             <BarChart data={maintenanceSeries}>

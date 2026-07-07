@@ -64,14 +64,14 @@ export default function ManutencaoPreventiva() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 animate-frota-slide-up">
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>Manutenção Preventiva</h1>
           <p className="text-muted-foreground text-xs mt-0.5">Plano de revisões, agendamentos simples por data/KM e alertas visuais</p>
         </div>
         {canManage && (
-          <button onClick={openNew} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
+          <button onClick={openNew} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98] transition-all duration-200">
             <Plus size={15} /> Novo item
           </button>
         )}
@@ -157,10 +157,10 @@ export default function ManutencaoPreventiva() {
 
       {modal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-xl w-full max-w-lg shadow-2xl">
+          <div className="bg-card border border-border rounded-xl w-full max-w-lg shadow-2xl animate-frota-slide-up">
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>{editing ? "Editar item preventivo" : "Novo item de manutenção"}</h2>
-              <button onClick={() => setModal(false)} className="text-muted-foreground hover:text-foreground transition-colors"><X size={18} /></button>
+              <button onClick={() => setModal(false)} className="text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-md p-0.5 transition-all duration-150"><X size={18} /></button>
             </div>
             <div className="p-6 grid grid-cols-2 gap-4">
               <div className="col-span-2">
@@ -168,24 +168,24 @@ export default function ManutencaoPreventiva() {
                 <select value={`${form.item}|||${form.frequencia}`} onChange={(event) => {
                   const [item, frequencia] = event.target.value.split("|||");
                   setForm((current) => ({ ...current, item, frequencia }));
-                }} className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 transition-colors">
+                }} className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:shadow-[0_0_0_3px_rgba(29,108,240,0.1)] transition-all duration-200">
                   {seedOptions.map((option) => <option key={option.item} value={`${option.item}|||${option.frequencia}`}>{option.item} — {option.frequencia}</option>)}
                 </select>
               </div>
               <div className="col-span-2">
                 <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1.5 block">frequência</label>
-                <input value={form.frequencia} onChange={(event) => setForm((current) => ({ ...current, frequencia: event.target.value }))} className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 transition-colors" />
+                <input value={form.frequencia} onChange={(event) => setForm((current) => ({ ...current, frequencia: event.target.value }))} className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:shadow-[0_0_0_3px_rgba(29,108,240,0.1)] transition-all duration-200" />
               </div>
               {[ ["Última Data", "ultimaData", "date"], ["Último KM", "ultimoKm", "number"], ["Próxima Data", "proximaData", "date"], ["Próximo KM", "proximoKm", "number"] ].map(([label, key, type]) => (
                 <div key={String(key)}>
                   <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1.5 block">{label}</label>
-                  <input type={type as string} value={form[key as keyof typeof form]} onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))} className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 transition-colors" />
+                  <input type={type as string} value={form[key as keyof typeof form]} onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))} className="w-full bg-input-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:shadow-[0_0_0_3px_rgba(29,108,240,0.1)] transition-all duration-200" />
                 </div>
               ))}
             </div>
             <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
-              <button onClick={() => setModal(false)} className="px-4 py-2 rounded-md text-sm text-muted-foreground border border-border hover:border-foreground/20 transition-colors">Cancelar</button>
-              <button onClick={handleSave} className="px-4 py-2 rounded-md text-sm bg-primary text-primary-foreground hover:bg-primary/90 font-medium transition-colors">Salvar</button>
+              <button onClick={() => setModal(false)} className="px-4 py-2 rounded-md text-sm text-muted-foreground border border-border hover:border-foreground/20 hover:bg-muted/20 transition-all duration-200">Cancelar</button>
+              <button onClick={handleSave} className="px-4 py-2 rounded-md text-sm bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:shadow-primary/25 font-medium transition-all duration-200 active:scale-[0.98]">Salvar</button>
             </div>
           </div>
         </div>
