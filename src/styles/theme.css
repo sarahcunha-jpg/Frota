@@ -2,43 +2,43 @@
 
 :root {
   --font-size: 14px;
-  --background: #080f1e;
-  --foreground: #e2e8f0;
-  --card: #0f1a2e;
-  --card-foreground: #e2e8f0;
-  --popover: #162035;
-  --popover-foreground: #e2e8f0;
-  --primary: #2575f5;
+  --background: #f4f6fa;           /* antes: #080f1e */
+  --foreground: #0f172a;           /* antes: #e2e8f0 */
+  --card: #ffffff;                 /* antes: #0f1a2e */
+  --card-foreground: #0f172a;      /* antes: #e2e8f0 */
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #1f6fff;
   --primary-foreground: #ffffff;
-  --secondary: #162035;
-  --secondary-foreground: #94a3b8;
-  --muted: #1a2a42;
+  --secondary: #eef2f7;
+  --secondary-foreground: #475569;
+  --muted: #f1f5f9;
   --muted-foreground: #64748b;
   --accent: #f59e0b;
-  --accent-foreground: #000000;
+  --accent-foreground: #111827;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(148, 163, 184, 0.11);
-  --input: #162035;
-  --input-background: #162035;
-  --switch-background: #334155;
+  --border: #e5e7eb;
+  --input: #ffffff;
+  --input-background: #ffffff;
+  --switch-background: #cbd5e1;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: #2575f5;
-  --chart-1: #2575f5;
+  --ring: #1f6fff;
+  --chart-1: #1f6fff;
   --chart-2: #10b981;
   --chart-3: #f59e0b;
   --chart-4: #ef4444;
   --chart-5: #8b5cf6;
-  --radius: 0.5rem;
-  --sidebar: #060d1a;
-  --sidebar-foreground: #94a3b8;
-  --sidebar-primary: #2575f5;
+  --radius: 0.8rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #334155;
+  --sidebar-primary: #1f6fff;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #162035;
-  --sidebar-accent-foreground: #e2e8f0;
-  --sidebar-border: rgba(148, 163, 184, 0.07);
-  --sidebar-ring: #2575f5;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #1f6fff;
 }
 
 .dark {
@@ -130,13 +130,11 @@
     font-size: var(--font-size);
     scroll-behavior: smooth;
   }
-  body {
-    @apply bg-background text-foreground antialiased;
-    background:
-      radial-gradient(circle at top, rgba(59, 130, 246, 0.16), transparent 28%),
-      radial-gradient(circle at right, rgba(14, 165, 233, 0.10), transparent 22%),
-      linear-gradient(180deg, #08111f 0%, #0b1220 100%);
-    font-family: 'Inter', sans-serif;
+ body {
+  @apply bg-background text-foreground antialiased;
+  background: var(--background); /* remove gradiente escuro */
+  font-family: 'Inter', sans-serif;
+}
   }
   h1, h2, h3, h4 {
     font-family: 'Roboto Slab', serif;
