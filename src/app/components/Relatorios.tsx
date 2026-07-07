@@ -34,7 +34,7 @@ export default function Relatorios() {
         return { headers: ["Item", "Frequência", "Próxima Data", "Próximo KM", "Status"], rows, footer: `Itens em alerta/vencidos: ${rows.length}` };
       }
       case "os": {
-        const rows = ordensServico.filter((item) => withinRange(item.data)).map((item) => [item.numero, item.data, item.viatura, item.problema, item.responsavel, `R$ ${item.custo.toLocaleString("pt-BR")}`, item.status]);
+        const rows = ordensServico.filter((item) => withinRange(item.data)).map((item) => [item.numero, item.data, item.viatura, item.problema, item.responsavel, `R$ ${item.custo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`, item.status]);
         return { headers: ["OS", "Data", "Viatura", "Problema", "Responsável", "Custo", "Status"], rows, footer: `OS no período: ${rows.length}` };
       }
       case "custos": {
@@ -54,7 +54,7 @@ export default function Relatorios() {
       }
       case "kpi": {
         const rows = [
-          ["Disponibilidade da Frota", `${getKpis(viaturas, ordensServico).disponibilidade}%`],
+          ["Disponibilidade da Frota", `${kpis.disponibilidade}%`],
           ["MTTR", `${kpis.mttr.toFixed(1)} dias`],
           ["MTBF", kpis.mtbf ? `${kpis.mtbf.toLocaleString("pt-BR")} h` : "—"],
           ["Custo por Viatura", `R$ ${Math.round(kpis.custoPorViatura).toLocaleString("pt-BR")}`],
@@ -91,7 +91,14 @@ export default function Relatorios() {
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         {RELATORIOS.map((item) => (
           <button key={item.id} onClick={() => setSelected(item.id === selected ? null : item.id)}
-            className={`report-card ${selected === item.id ? 'report-card-active' : ''}`}>
+            className="flex items-start gap-3 p-4 rounded-xl text-left transition-all duration-200"
+            style={selected === item.id
+              ? { background: "rgba(37,117,245,0.12)", border: "1px solid rgba(37,117,245,0.4)", boxShadow: "0 4px 16px rgba(37,117,245,0.15)" }
+              : { background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }
+            }
+            onMouseEnter={(e) => { if (selected !== item.id) (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.22)"; }}
+            onMouseLeave={(e) => { if (selected !== item.id) (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.11)"; }}
+          >
             <item.icon size={16} className={`mt-0.5 ${selected === item.id ? "text-primary" : "text-muted-foreground"}`} />
             <div>
               <p className={`font-medium text-sm mb-0.5 ${selected === item.id ? "text-primary" : "text-foreground"}`}>{item.label}</p>
@@ -107,32 +114,43 @@ export default function Relatorios() {
             <div className="flex items-center gap-2">
               <label className="text-xs text-muted-foreground">De:</label>
               <input type="date" value={periodo.inicio} onChange={(event) => setPeriodo((current) => ({ ...current, inicio: event.target.value }))}
-                className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none input-surface" />
+                className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none"
+                style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.15)" }} />
             </div>
             <div className="flex items-center gap-2">
               <label className="text-xs text-muted-foreground">Até:</label>
               <input type="date" value={periodo.fim} onChange={(event) => setPeriodo((current) => ({ ...current, fim: event.target.value }))}
-                className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none input-surface" />
+                className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none"
+                style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.15)" }} />
             </div>
             {selected === "historico" && (
               <div className="flex items-center gap-2">
                 <label className="text-xs text-muted-foreground">Viatura:</label>
                 <select value={viaturaId} onChange={(event) => setViaturaId(event.target.value)}
-                  className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none input-surface">
+                  className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none"
+                  style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.15)" }}>
                   {viaturas.map((item) => <option key={item.id} value={item.id}>{item.numero} – {item.placa}</option>)}
                 </select>
               </div>
             )}
             {canExport && (
               <div className="ml-auto flex gap-2">
-                <button onClick={exportCsv} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-all btn-ghost"> <Download size={13} /> CSV/Excel</button>
-                <button onClick={exportPdf} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-white font-medium transition-all btn-primary"> <Download size={13} /> PDF</button>
+                <button onClick={exportCsv} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-all"
+                  style={{ border: "1px solid rgba(148,163,184,0.15)" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ""; }}
+                ><Download size={13} /> CSV/Excel</button>
+                <button onClick={exportPdf} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-white font-medium transition-all"
+                  style={{ background: "linear-gradient(135deg,#2575f5,#4f8dff)", boxShadow: "0 4px 14px rgba(37,117,245,0.35)" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 20px rgba(37,117,245,0.5)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 14px rgba(37,117,245,0.35)"; }}
+                ><Download size={13} /> PDF</button>
               </div>
             )}
           </div>
 
-          <div className="report-result card">
-            <div className="flex items-center justify-between px-5 py-4 report-result-header">
+          <div className="rounded-xl overflow-hidden shadow-lg shadow-black/30 animate-frota-slide-up" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>
+            <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: "1px solid rgba(148,163,184,0.09)" }}>
               <div>
                 <h3 className="font-semibold text-foreground text-sm" style={{ fontFamily: "Roboto Slab, serif" }}>{RELATORIOS.find((item) => item.id === selected)?.label}</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">Período: {periodo.inicio} a {periodo.fim} · 10º BPM Blumenau/SC</p>
@@ -142,13 +160,17 @@ export default function Relatorios() {
             <div className="overflow-x-auto p-2">
               <table className="w-full text-xs">
                 <thead>
-                  <tr>
+                  <tr style={{ borderBottom: "1px solid rgba(148,163,184,0.09)" }}>
                     {report.headers.map((header) => <th key={header} className="text-left text-muted-foreground px-3 py-2 font-medium">{header}</th>)}
                   </tr>
                 </thead>
                 <tbody>
                   {report.rows.map((row, index) => (
-                    <tr key={`${row[0]}-${index}`} className={`report-row ${index % 2 !== 0 ? 'alt' : ''}`}>
+                    <tr key={`${row[0]}-${index}`} className="transition-colors"
+                      style={{ borderBottom: "1px solid rgba(148,163,184,0.06)", background: index % 2 !== 0 ? "rgba(255,255,255,0.012)" : "" }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(37,117,245,0.05)"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = index % 2 !== 0 ? "rgba(255,255,255,0.012)" : ""; }}
+                    >
                       {row.map((cell, cellIndex) => <td key={`${cellIndex}-${cell}`} className="px-3 py-2">{cell}</td>)}
                     </tr>
                   ))}
@@ -160,7 +182,7 @@ export default function Relatorios() {
         </>
       )}
 
-      {selected && !canExport && <div className="text-sm text-muted-foreground rounded-xl p-4 card">Exportação disponível apenas para usuários com permissão.</div>}
+      {selected && !canExport && <div className="text-sm text-muted-foreground rounded-xl p-4" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>Exportações CSV/PDF estão disponíveis apenas para Administrador e Gestor.</div>}
     </div>
   );
 }
