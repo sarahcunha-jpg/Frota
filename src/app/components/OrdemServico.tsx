@@ -6,9 +6,9 @@ import { canFinalizeOrders, canManageOrders, canOpenMaintenanceRequest } from ".
 import { openPrintableWindow } from "../lib/fleet";
 
 const STATUS_CONFIG: Record<OSStatus, { label: string; color: string; bg: string }> = {
-  aberta: { label: "Aberta", color: "text-sky-400", bg: "bg-sky-500/10 border-sky-500/20" },
-  andamento: { label: "Em Andamento", color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20" },
-  finalizada: { label: "Finalizada", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
+  aberta: { label: "Aberta", color: "var(--brand-500)", bg: "rgba(31,111,255,0.08)" },
+  andamento: { label: "Em Andamento", color: "var(--warning)", bg: "rgba(255,176,32,0.08)" },
+  finalizada: { label: "Finalizada", color: "var(--success)", bg: "rgba(24,178,107,0.08)" },
 };
 
 export default function OrdemServico() {
@@ -63,11 +63,7 @@ export default function OrdemServico() {
           <p className="text-muted-foreground text-xs mt-0.5">{ordensServico.length} ordens no total</p>
         </div>
         {canOpen && (
-          <button onClick={() => setModal("add")} className="flex items-center gap-2 text-white px-4 py-2 rounded-lg text-sm font-medium active:scale-[0.98] transition-all duration-200"
-            style={{ background: "linear-gradient(135deg,#2575f5,#4f8dff)", boxShadow: "0 4px 14px rgba(37,117,245,0.4)" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 20px rgba(37,117,245,0.55)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 14px rgba(37,117,245,0.4)"; }}
-          >
+          <button onClick={() => setModal("add")} className="btn-primary flex items-center gap-2">
             <Plus size={15} /> {canManage ? "Abrir OS" : "Solicitar manutenção"}
           </button>
         )}
@@ -75,19 +71,11 @@ export default function OrdemServico() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {([ ["aberta", FileText, "Abertas"], ["andamento", Clock, "Em Andamento"], ["finalizada", CheckSquare, "Finalizadas"] ] as const).map(([key, Icon, label]) => (
-          <button key={key} onClick={() => setFilter((current) => current === key ? "todos" : key)}
-            className="flex items-center gap-3 p-4 rounded-xl text-left transition-all duration-200"
-            style={filter === key
-              ? { background: "rgba(37,117,245,0.12)", border: "1px solid rgba(37,117,245,0.35)", boxShadow: "0 4px 16px rgba(37,117,245,0.15)" }
-              : { background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }
-            }
-            onMouseEnter={(e) => { if (filter !== key) (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.22)"; }}
-            onMouseLeave={(e) => { if (filter !== key) (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.11)"; }}
-          >
-            <Icon size={16} className={STATUS_CONFIG[key].color} />
+          <button key={key} onClick={() => setFilter((current) => current === key ? "todos" : key)} className={`report-card ${filter === key ? 'report-card-active' : ''}`}>
+            <Icon size={16} className={"text-muted"} />
             <div>
-              <p className="text-muted-foreground text-xs">{label}</p>
-              <p className="text-2xl font-bold" style={{ fontFamily: "DM Mono, monospace", color: filter === key ? "#60a5fa" : "#e2e8f0" }}>{counts[key]}</p>
+              <p className="text-muted text-xs">{label}</p>
+              <p className="text-2xl font-bold" style={{ fontFamily: "DM Mono, monospace", color: filter === key ? 'var(--brand-700)' : 'var(--muted)' }}>{counts[key as keyof typeof counts]}</p>
             </div>
           </button>
         ))}
@@ -97,19 +85,14 @@ export default function OrdemServico() {
         {filtered.map((order) => {
           const config = STATUS_CONFIG[order.status];
           return (
-            <div key={order.id} className="rounded-xl p-4 cursor-pointer transition-all duration-200"
-              style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.22)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(0,0,0,0.3)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.11)"; (e.currentTarget as HTMLElement).style.boxShadow = ""; (e.currentTarget as HTMLElement).style.transform = ""; }}
-              onClick={() => { setSelected(order); setModal("view"); }}
-            >
+            <div key={order.id} className="card cursor-pointer" onClick={() => { setSelected(order); setModal("view"); }}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="mt-0.5"><AlertCircle size={15} className={config.color} /></div>
+                  <div className="mt-0.5"><AlertCircle size={15} style={{ color: config.color }} /></div>
                   <div>
                     <div className="flex items-center gap-3 mb-1 flex-wrap">
                       <span className="font-semibold text-foreground text-sm" style={{ fontFamily: "DM Mono, monospace" }}>{order.numero}</span>
-                      <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs border ${config.bg} ${config.color}`}>{config.label}</span>
+                      <span className="badge small" style={{ background: config.bg, color: config.color }}>{config.label}</span>
                     </div>
                     <p className="text-foreground text-sm mb-0.5">{order.viatura}</p>
                     <p className="text-muted-foreground text-xs">{order.problema}</p>
@@ -128,33 +111,27 @@ export default function OrdemServico() {
       </div>
 
       {modal === "add" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}>
-          <div className="w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto animate-frota-scale-in" style={{ background: "#0f1a2e", border: "1px solid rgba(148,163,184,0.14)", borderRadius: "1rem" }}>
-            <div className="flex items-center justify-between px-6 py-4 sticky top-0" style={{ borderBottom: "1px solid rgba(148,163,184,0.1)", background: "#0f1a2e" }}>
+        <div className="modal-overlay">
+          <div className="modal-panel">
+            <div className="modal-header">
               <h2 className="font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>{canManage ? "Abrir ordem de serviço" : "Solicitar manutenção"}</h2>
               <button onClick={() => setModal(null)} className="text-muted-foreground hover:text-foreground rounded-lg p-1 transition-all hover:bg-white/5"><X size={18} /></button>
             </div>
             <div className="p-6 space-y-4">
               {[
                 { label: "viatura", content: (
-                  <select value={form.viaturaId} onChange={(event) => setForm((current) => ({ ...current, viaturaId: event.target.value }))}
-                    className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none"
-                    style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }}>
+                  <select value={form.viaturaId} onChange={(event) => setForm((current) => ({ ...current, viaturaId: event.target.value }))} className="input-surface w-full">
                     {viaturas.map((viatura) => <option key={viatura.id} value={viatura.id}>{viatura.numero} – {viatura.placa} {viatura.modelo}</option>)}
                   </select>
                 )},
                 { label: "problema identificado", content: (
-                  <textarea value={form.problema} onChange={(event) => setForm((current) => ({ ...current, problema: event.target.value }))} rows={2}
-                    className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none resize-none"
-                    style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }} />
+                  <textarea value={form.problema} onChange={(event) => setForm((current) => ({ ...current, problema: event.target.value }))} rows={2} className="input-surface w-full resize-none" />
                 )},
                 { label: "serviço executado", content: (
-                  <textarea value={form.servico} onChange={(event) => setForm((current) => ({ ...current, servico: event.target.value }))} rows={2}
-                    className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none resize-none"
-                    style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }} />
+                  <textarea value={form.servico} onChange={(event) => setForm((current) => ({ ...current, servico: event.target.value }))} rows={2} className="input-surface w-full resize-none" />
                 )},
               ].map(({ label, content }) => (
-                <div key={label}>
+                <div key={label as string}>
                   <label className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-1.5 block">{label}</label>
                   {content}
                 </div>
@@ -162,57 +139,43 @@ export default function OrdemServico() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-1.5 block">responsável</label>
-                  <input value={form.responsavel} onChange={(event) => setForm((current) => ({ ...current, responsavel: event.target.value }))}
-                    className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none"
-                    style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }} />
+                  <input value={form.responsavel} onChange={(event) => setForm((current) => ({ ...current, responsavel: event.target.value }))} className="input-surface w-full" />
                 </div>
                 <div>
                   <label className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-1.5 block">custo estimado (R$)</label>
-                  <input type="number" value={form.custo} onChange={(event) => setForm((current) => ({ ...current, custo: event.target.value }))}
-                    className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none"
-                    style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }} />
+                  <input type="number" value={form.custo} onChange={(event) => setForm((current) => ({ ...current, custo: event.target.value }))} className="input-surface w-full" />
                 </div>
               </div>
               <div>
                 <label className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-1.5 block">peças utilizadas</label>
-                <input value={form.pecas} onChange={(event) => setForm((current) => ({ ...current, pecas: event.target.value }))}
-                  className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none"
-                  style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }}
-                  placeholder="Ex: Pastilhas de freio, fluido DOT4" />
+                <input value={form.pecas} onChange={(event) => setForm((current) => ({ ...current, pecas: event.target.value }))} className="input-surface w-full" placeholder="Ex: Pastilhas de freio, fluido DOT4" />
               </div>
               <div>
                 <label className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-1.5 block">tempo de parada (dias)</label>
-                <input type="number" value={form.tempoParada} onChange={(event) => setForm((current) => ({ ...current, tempoParada: event.target.value }))}
-                  className="w-full rounded-lg px-3 py-2 text-sm text-foreground outline-none"
-                  style={{ background: "#162035", border: "1px solid rgba(148,163,184,0.15)" }} />
+                <input type="number" value={form.tempoParada} onChange={(event) => setForm((current) => ({ ...current, tempoParada: event.target.value }))} className="input-surface w-full" />
               </div>
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4" style={{ borderTop: "1px solid rgba(148,163,184,0.1)" }}>
-              <button onClick={() => setModal(null)} className="px-4 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-all"
-                style={{ border: "1px solid rgba(148,163,184,0.15)" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ""; }}
-              >Cancelar</button>
-              <button onClick={handleAdd} className="px-4 py-2 rounded-lg text-sm text-white font-semibold transition-all"
-                style={{ background: "linear-gradient(135deg,#2575f5,#4f8dff)", boxShadow: "0 4px 14px rgba(37,117,245,0.35)" }}>Enviar</button>
+            <div className="modal-actions">
+              <button onClick={() => setModal(null)} className="btn-ghost">Cancelar</button>
+              <button onClick={handleAdd} className="btn-primary">Enviar</button>
             </div>
           </div>
         </div>
       )}
 
       {modal === "view" && selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}>
-          <div className="w-full max-w-xl shadow-2xl animate-frota-scale-in" style={{ background: "#0f1a2e", border: "1px solid rgba(148,163,184,0.14)", borderRadius: "1rem" }}>
-            <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid rgba(148,163,184,0.1)" }}>
+        <div className="modal-overlay">
+          <div className="modal-panel">
+            <div className="modal-header">
               <div>
                 <span className="font-bold text-foreground" style={{ fontFamily: "DM Mono, monospace" }}>{selected.numero}</span>
-                <span className={`ml-3 inline-flex px-2.5 py-0.5 rounded-full text-xs border ${STATUS_CONFIG[selected.status].bg} ${STATUS_CONFIG[selected.status].color}`}>{STATUS_CONFIG[selected.status].label}</span>
+                <span className="ml-3 badge small" style={{ background: STATUS_CONFIG[selected.status].bg, color: STATUS_CONFIG[selected.status].color }}>{STATUS_CONFIG[selected.status].label}</span>
               </div>
               <button onClick={() => setModal(null)} className="text-muted-foreground hover:text-foreground rounded-lg p-1 transition-all hover:bg-white/5"><X size={18} /></button>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
-                {[ ["Data", selected.data], ["Viatura", selected.viatura], ["Responsável", selected.responsavel], ["Tempo de parada", `${selected.tempoParada} dia(s)`], ["Custo", `R$ ${selected.custo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`] ].map(([key, value]) => (
+                {[["Data", selected.data], ["Viatura", selected.viatura], ["Responsável", selected.responsavel], ["Tempo de parada", `${selected.tempoParada} dia(s)`], ["Custo", `R$ ${selected.custo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`]].map(([key, value]: any) => (
                   <div key={String(key)} className={key === "Viatura" ? "col-span-2" : ""}>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-0.5">{key}</p>
                     <p className="text-foreground font-medium">{value}</p>
@@ -226,29 +189,11 @@ export default function OrdemServico() {
                 </div>
               ))}
             </div>
-            <div className="flex items-center gap-3 px-6 py-4 flex-wrap" style={{ borderTop: "1px solid rgba(148,163,184,0.1)" }}>
-              <button onClick={() => printOrder(selected)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm px-3 py-1.5 rounded-lg transition-all"
-                style={{ border: "1px solid rgba(148,163,184,0.15)" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ""; }}
-              >
-                <Printer size={14} /> Imprimir
-              </button>
+            <div className="modal-actions">
+              <button onClick={() => printOrder(selected)} className="btn-ghost"><Printer size={14} /> Imprimir</button>
               <div className="ml-auto flex gap-2 flex-wrap">
-                {selected.status === "aberta" && canFinalize && (
-                  <button onClick={() => advanceOrder(selected.id)} className="px-3 py-1.5 rounded-lg text-sm transition-all"
-                    style={{ background: "rgba(245,158,11,0.15)", color: "#fbbf24", border: "1px solid rgba(245,158,11,0.3)" }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(245,158,11,0.25)"; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(245,158,11,0.15)"; }}
-                  >Iniciar atendimento</button>
-                )}
-                {selected.status !== "finalizada" && canFinalize && (
-                  <button onClick={() => { finalizeOrder(selected.id); setModal(null); }} className="px-3 py-1.5 rounded-lg text-sm transition-all"
-                    style={{ background: "rgba(16,185,129,0.15)", color: "#34d399", border: "1px solid rgba(16,185,129,0.3)" }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(16,185,129,0.25)"; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(16,185,129,0.15)"; }}
-                  >Finalizar OS</button>
-                )}
+                {selected.status === "aberta" && canFinalize && (<button onClick={() => advanceOrder(selected.id)} className="btn-ghost" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>Iniciar atendimento</button>)}
+                {selected.status !== "finalizada" && canFinalize && (<button onClick={() => { finalizeOrder(selected.id); setModal(null); }} className="btn-primary">Finalizar OS</button>)}
               </div>
             </div>
           </div>
