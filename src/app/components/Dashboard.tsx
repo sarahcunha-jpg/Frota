@@ -2,31 +2,9 @@ import { AlertTriangle, Car, CheckCircle, Clock, DollarSign, TrendingUp, Wrench 
 import { AreaChart, Area, BarChart, Bar, CartesianGrid, Cell, Legend, PieChart, Pie, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useFleet } from "../context/FleetContext";
 import { buildAvailabilitySeries, buildMaintenanceSeries, getFleetStats, getKpis } from "../lib/fleet";
+import { Card, KPICard, Badge } from "./ui";
 
-const COLORS = ["#1f6fff", "#10b981", "#ef4444"];
-
-function StatCard({
-  label, value, sub, icon: Icon, iconBg,
-}: {
-  label: string;
-  value: string | number;
-  sub?: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  iconBg: string;
-}) {
-  return (
-    <div className="bg-white rounded-xl p-5 flex items-center justify-between shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
-      <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{label}</p>
-        <p className="text-3xl font-bold text-gray-900">{value}</p>
-        {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
-      </div>
-      <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: iconBg }}>
-        <Icon size={20} className="text-white" />
-      </div>
-    </div>
-  );
-}
+const COLORS = ["#1E3A5F", "#27AE60", "#E74C3C"];
 
 const CustomTooltip = ({ active, payload, label }: any) => active && payload?.length ? (
   <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs shadow-lg">
@@ -50,174 +28,164 @@ export default function Dashboard() {
   ];
   const maintenanceSeries = buildMaintenanceSeries(historico);
   const availabilitySeries = buildAvailabilitySeries(viaturas);
-
   const totalCusto = historico.reduce((acc, h) => acc + h.custo, 0);
 
   return (
-    <div className="space-y-6 animate-frota-slide-up">
-
-      {/* Hero banner */}
-      <div className="relative rounded-2xl overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #1f6fff 0%, #1558d4 60%, #1040a8 100%)", minHeight: 160 }}>
-        {/* Watermark icons */}
-        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden>
-          <Car size={140} className="absolute -right-6 top-1/2 -translate-y-1/2 text-white/10" />
-          <Wrench size={90} className="absolute right-32 bottom-0 translate-y-4 text-white/8" />
-          <TrendingUp size={80} className="absolute right-60 top-2 text-white/8" />
+    <div className="space-y-6 animate-fade-in">
+      {/* Hero Banner */}
+      <div
+        className="relative rounded-xl overflow-hidden p-8 text-white"
+        style={{
+          background: "linear-gradient(135deg, #1E3A5F 0%, #2c4f7c 60%, #162a47 100%)",
+        }}
+      >
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden opacity-10" aria-hidden>
+          <Car size={200} className="absolute -right-10 top-1/2 -translate-y-1/2" />
         </div>
-
-        <div className="relative z-10 px-8 py-7">
-          <h1 className="text-2xl font-bold text-white leading-tight">Painel de Controle da Frota</h1>
-          <p className="text-blue-200 text-sm mt-1">Polícia Militar de Blumenau — visão geral em tempo real</p>
-          <p className="mt-4 text-white">
-            <span className="text-4xl font-extrabold">{kpis.disponibilidade}%</span>
-            <span className="text-blue-200 text-base ml-2">de disponibilidade</span>
-          </p>
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold mb-2">Painel de Controle da Frota</h1>
+          <p className="text-blue-100 text-sm mb-6">Polícia Militar de Blumenau — Gestão de manutenção em tempo real</p>
+          <div className="flex items-baseline gap-3">
+            <span className="text-5xl font-extrabold">{kpis.disponibilidade}%</span>
+            <span className="text-blue-100">de disponibilidade operacional</span>
+          </div>
         </div>
       </div>
 
-      {/* KPI cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
+      {/* KPI Cards - 4 colunas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard
           label="Total de Viaturas"
           value={stats.total}
-          sub="unidades cadastradas"
+          subtitle="unidades cadastradas"
           icon={Car}
-          iconBg="linear-gradient(135deg,#1f6fff,#4f8dff)"
+          iconBg="linear-gradient(135deg, #1E3A5F 0%, #2c4f7c 100%)"
         />
-        <StatCard
+        <KPICard
           label="Operacionais"
           value={stats.emOperacao}
-          sub={`${stats.total ? Math.round((stats.emOperacao / stats.total) * 100) : 0}% da frota`}
+          subtitle={`${stats.total ? Math.round((stats.emOperacao / stats.total) * 100) : 0}% da frota`}
           icon={CheckCircle}
-          iconBg="linear-gradient(135deg,#059669,#10b981)"
+          iconBg="linear-gradient(135deg, #27AE60 0%, #52be7f 100%)"
         />
-        <StatCard
+        <KPICard
           label="Em Manutenção"
           value={stats.emManutencao + stats.indisponiveis}
-          sub={`${stats.ordensAbertas} ordens abertas`}
+          subtitle={`${stats.ordensAbertas} ordens abertas`}
           icon={Clock}
-          iconBg="linear-gradient(135deg,#d97706,#f59e0b)"
+          iconBg="linear-gradient(135deg, #F39C12 0%, #f5b041 100%)"
         />
-        <StatCard
+        <KPICard
           label="Custo Total"
           value={totalCusto.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-          sub={`${historico.length} manutenções`}
+          subtitle={`${historico.length} manutenções`}
           icon={DollarSign}
-          iconBg="linear-gradient(135deg,#0284c7,#38bdf8)"
+          iconBg="linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)"
         />
       </div>
 
-      {/* Maintenance alerts */}
+      {/* Maintenance Alerts */}
       {(stats.manutencoesVencidas.length > 0 || stats.manutencoesAlerta.length > 0) && (
-        <div className="rounded-xl p-4 animate-frota-slide-up bg-amber-50 border border-amber-200">
-          <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle size={15} className="text-amber-500" />
-            <span className="text-amber-700 font-semibold text-sm">Alertas de manutenção vencida</span>
+        <Card className="border-l-4 border-l-yellow-400 bg-yellow-50">
+          <div className="flex items-center gap-3 mb-4">
+            <AlertTriangle size={18} className="text-yellow-600" />
+            <h3 className="font-semibold text-yellow-800">Alertas de Manutenção</h3>
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {stats.manutencoesVencidas.map((item) => (
-              <div key={item.id} className="flex items-center gap-2 text-xs">
-                <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
-                <span className="text-gray-800">{item.item}</span>
-                <span className="text-red-500 ml-auto">Vencida em {item.proximaData || "data não informada"}</span>
+              <div key={item.id} className="flex items-center justify-between p-2 bg-white rounded border border-yellow-200">
+                <div className="flex items-center gap-2">
+                  <Badge variant="danger">Vencida</Badge>
+                  <span className="text-sm text-gray-700">{item.item}</span>
+                </div>
+                <span className="text-xs text-gray-500">{item.proximaData}</span>
               </div>
             ))}
             {stats.manutencoesAlerta.map((item) => (
-              <div key={item.id} className="flex items-center gap-2 text-xs">
-                <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
-                <span className="text-gray-800">{item.item}</span>
-                <span className="text-amber-600 ml-auto">Vence em {item.proximaData || "data não informada"}</span>
+              <div key={item.id} className="flex items-center justify-between p-2 bg-white rounded border border-yellow-200">
+                <div className="flex items-center gap-2">
+                  <Badge variant="warning">Alerta</Badge>
+                  <span className="text-sm text-gray-700">{item.item}</span>
+                </div>
+                <span className="text-xs text-gray-500">{item.proximaData}</span>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
-      {/* Charts row 1 */}
+      {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-semibold text-gray-800">Status da Frota</h3>
-          </div>
-          <ResponsiveContainer width="100%" height={180}>
+        <Card header={<h3 className="font-semibold text-gray-800 text-sm">Status da Frota</h3>}>
+          <ResponsiveContainer width="100%" height={200}>
             <PieChart>
-              <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={78} paddingAngle={3} dataKey="value">
-                {pieData.map((_, index) => <Cell key={index} fill={COLORS[index]} />)}
+              <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={2} dataKey="value">
+                {pieData.map((_, index) => (
+                  <Cell key={index} fill={COLORS[index]} />
+                ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="space-y-2 mt-2">
+          <div className="mt-4 space-y-2 text-sm">
             {pieData.map((item, index) => (
-              <div key={item.name} className="flex items-center justify-between text-xs">
+              <div key={item.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: COLORS[index] }} />
-                  <span className="text-gray-500">{item.name}</span>
+                  <div className="w-3 h-3 rounded-full" style={{ background: COLORS[index] }} />
+                  <span className="text-gray-600">{item.name}</span>
                 </div>
-                <span className="text-gray-800 font-semibold">{item.value}</span>
+                <span className="font-semibold text-gray-800">{item.value}</span>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-semibold text-gray-800">Custos Mensais (R$)</h3>
-          </div>
-          <ResponsiveContainer width="100%" height={180}>
+        <Card header={<h3 className="font-semibold text-gray-800 text-sm">Custos Mensais (R$)</h3>}>
+          <ResponsiveContainer width="100%" height={200}>
             <BarChart data={maintenanceSeries}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="mes" tick={{ fill: "#9ca3af", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+              <XAxis dataKey="mes" tick={{ fill: "#9ca3af", fontSize: 11 }} />
+              <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="custo" name="Custo R$" fill="#1f6fff" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="custo" name="Custo R$" fill="#1E3A5F" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </Card>
       </div>
 
-      {/* Charts row 2 */}
+      {/* Charts Row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-          <div className="flex items-center gap-2 mb-5">
-            <TrendingUp size={14} className="text-primary" />
-            <h3 className="text-sm font-semibold text-gray-800">Disponibilidade da frota (%)</h3>
-          </div>
-          <ResponsiveContainer width="100%" height={140}>
+        <Card header={<div className="flex items-center gap-2"><TrendingUp size={14} className="text-[#1E3A5F]" /><h3 className="font-semibold text-gray-800 text-sm">Disponibilidade (%)</h3></div>}>
+          <ResponsiveContainer width="100%" height={160}>
             <AreaChart data={availabilitySeries}>
               <defs>
                 <linearGradient id="dispGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#1f6fff" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#1f6fff" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#1E3A5F" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#1E3A5F" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="mes" tick={{ fill: "#9ca3af", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis domain={[70, 100]} tick={{ fill: "#9ca3af", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="mes" tick={{ fill: "#9ca3af", fontSize: 11 }} />
+              <YAxis domain={[70, 100]} tick={{ fill: "#9ca3af", fontSize: 11 }} />
               <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="disponibilidade" name="Disponibilidade %" stroke="#1f6fff" fill="url(#dispGrad)" strokeWidth={2.5} />
+              <Area type="monotone" dataKey="disponibilidade" name="Disponibilidade %" stroke="#1E3A5F" fill="url(#dispGrad)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-semibold text-gray-800">Manutenções por mês</h3>
-            <span className="text-xs text-gray-400">Histórico consolidado</span>
-          </div>
-          <ResponsiveContainer width="100%" height={140}>
-            <BarChart data={maintenanceSeries} barGap={4}>
+        <Card header={<h3 className="font-semibold text-gray-800 text-sm">Manutenções por Mês</h3>}>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={maintenanceSeries}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="mes" tick={{ fill: "#9ca3af", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="mes" tick={{ fill: "#9ca3af", fontSize: 11 }} />
+              <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ fontSize: 11, color: "#9ca3af" }} />
-              <Bar dataKey="preventiva" name="Preventiva" fill="#1f6fff" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="corretiva" name="Corretiva" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="preventiva" name="Preventiva" fill="#1E3A5F" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="corretiva" name="Corretiva" fill="#F39C12" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </Card>
       </div>
     </div>
   );
