@@ -1,129 +1,133 @@
+import { History, Search, Filter } from "lucide-react";
 import { useState } from "react";
-import { Wrench, Shield, DollarSign, CalendarClock } from "lucide-react";
 import { useFleet } from "../context/FleetContext";
-import { buildVehicleHistoryStats } from "../lib/fleet";
+import { Card, Badge, Input } from "./ui";
 
 export default function Historico() {
-  const { viaturas, historico, ordensServico } = useFleet();
-  const [selectedId, setSelectedId] = useState(viaturas[0]?.id ?? "");
-  const viatura = viaturas.find((item) => item.id === selectedId);
+  const { historico, viaturas } = useFleet();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [tipoFilter, setTipoFilter] = useState("");
 
-  if (!viatura) {
-    return <div className="text-sm text-muted-foreground">Nenhuma viatura cadastrada.</div>;
-  }
+  const filtered = historico.filter((h) => {
+    const viatura = viaturas.find((v) => v.id === h.viaturaId);
+    const matchSearch =
+      h.id.includes(searchTerm) ||
+      h.servico.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (viatura?.placa.toLowerCase().includes(searchTerm.toLowerCase()) || false);
+    const matchTipo = !tipoFilter || h.tipo === tipoFilter;
+    return matchSearch && matchTipo;
+  });
 
-  const stats = buildVehicleHistoryStats(selectedId, historico, ordensServico);
+  const getTipoColor = (tipo: string) => (tipo === "preventiva" ? "success" : "warning");
+  const getTipoLabel = (tipo: string) => (tipo === "preventiva" ? "🔧 Preventiva" : "🚨 Corretiva");
+
+  const totalCusto = filtered.reduce((acc, h) => acc + h.custo, 0);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-xl font-bold text-foreground" style={{ fontFamily: "Roboto Slab, serif" }}>Histórico de Manutenção</h1>
-        <p className="text-muted-foreground text-xs mt-0.5">Registro completo por viatura, com custos e indisponibilidade</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Histórico de Manutenções</h1>
+        <p className="text-gray-600">Acompanhe todas as manutenções realizadas</p>
       </div>
 
-      <div>
-        <label className="text-xs text-muted-foreground mr-2">Selecionar Viatura:</label>
-        <select value={selectedId} onChange={(event) => setSelectedId(event.target.value)}
-          className="rounded-lg px-3 py-1.5 text-sm text-foreground outline-none transition-all duration-200"
-          style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.15)" }}
-          onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(37,117,245,0.5)"; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(148,163,184,0.15)"; }}
+      {/* Filtros */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Input
+          placeholder="Buscar por serviço ou viatura..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          icon={<Search size={16} />}
+        />
+        <select
+          value={tipoFilter}
+          onChange={(e) => setTipoFilter(e.target.value)}
+          className="px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-[#1E3A5F]"
         >
-          {viaturas.map((item) => <option key={item.id} value={item.id}>{item.numero} – {item.placa} {item.modelo}</option>)}
+          <option value="">Todos os Tipos</option>
+          <option value="preventiva">Preventiva</option>
+          <option value="corretiva">Corretiva</option>
         </select>
       </div>
 
-      <div className="rounded-xl p-5" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-2">
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">Viatura</p>
-            <p className="font-bold text-foreground text-lg" style={{ fontFamily: "Roboto Slab, serif" }}>{viatura.numero}</p>
-          </div>
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">Modelo</p>
-            <p className="font-medium text-foreground">{viatura.modelo}</p>
-          </div>
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">Placa</p>
-            <p className="font-medium" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.placa}</p>
-          </div>
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">KM Atual</p>
-            <p className="font-medium" style={{ fontFamily: "DM Mono, monospace" }}>{viatura.km.toLocaleString("pt-BR")}</p>
-          </div>
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">Unidade</p>
-            <p className="font-medium text-foreground text-xs">{viatura.unidade}</p>
-          </div>
-        </div>
+      {/* Resumo */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="bg-green-50 border-green-100">
+          <p className="text-xs text-green-600 uppercase tracking-wide font-semibold mb-1">Preventivas</p>
+          <p className="text-3xl font-bold text-green-700">{filtered.filter((h) => h.tipo === "preventiva").length}</p>
+        </Card>
+        <Card className="bg-orange-50 border-orange-100">
+          <p className="text-xs text-orange-600 uppercase tracking-wide font-semibold mb-1">Corretivas</p>
+          <p className="text-3xl font-bold text-orange-700">{filtered.filter((h) => h.tipo === "corretiva").length}</p>
+        </Card>
+        <Card className="bg-blue-50 border-blue-100">
+          <p className="text-xs text-blue-600 uppercase tracking-wide font-semibold mb-1">Custo Total</p>
+          <p className="text-2xl font-bold text-blue-700">{totalCusto.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
+        </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-        {[
-          { icon: DollarSign, color: "#fbbf24", label: "Custo acumulado", value: `R$ ${stats.totalCusto.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`, glow: "rgba(251,191,36,0.3)" },
-          { icon: Wrench, color: "#2575f5", label: "Total de serviços", value: String(stats.items.length), glow: "rgba(37,117,245,0.3)" },
-          { icon: Shield, color: "#34d399", label: "Indisponibilidade", value: `${stats.totalParadaDias} dia(s)`, glow: "rgba(52,211,153,0.3)" },
-          { icon: CalendarClock, color: "#a78bfa", label: "Peças substituídas", value: String(stats.pecas.length), glow: "rgba(167,139,250,0.3)" },
-        ].map(({ icon: Icon, color, label, value, glow }) => (
-          <div key={label} className="rounded-xl p-4 transition-all duration-200"
-            style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 20px ${glow}`; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = ""; }}
-          >
-            <div className="flex items-center gap-2 mb-2"><Icon size={14} style={{ color }} /><span className="text-[10px] text-muted-foreground uppercase tracking-[0.1em]">{label}</span></div>
-            <p className="text-2xl font-bold" style={{ fontFamily: "DM Mono, monospace", color }}>{value}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="rounded-xl p-4" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>
-        <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-3">Revisões registradas</p>
-        <div className="flex flex-wrap gap-2">
-          {stats.revisoes.length > 0 ? stats.revisoes.map((date) => (
-            <span key={date} className="text-xs px-2.5 py-1 rounded-lg" style={{ fontFamily: "DM Mono, monospace", background: "rgba(37,117,245,0.1)", border: "1px solid rgba(37,117,245,0.22)", color: "#60a5fa" }}>{date}</span>
-          )) : <span className="text-sm text-muted-foreground">Nenhuma revisão preventiva registrada.</span>}
-        </div>
-      </div>
-
-      {stats.items.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground text-sm rounded-xl" style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}>Nenhum histórico encontrado para esta viatura.</div>
-      ) : (
-        <div className="relative">
-          <div className="absolute left-[120px] top-0 bottom-0 w-px" style={{ background: "rgba(148,163,184,0.1)" }} />
-          <div className="space-y-0">
-            {stats.items.map((item) => (
-              <div key={item.id} className="flex gap-6 group animate-frota-slide-up">
-                <div className="w-[104px] flex-shrink-0 pt-5 text-right">
-                  <p className="text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.data}</p>
-                  <p className="text-muted-foreground text-xs" style={{ fontFamily: "DM Mono, monospace" }}>{item.km.toLocaleString("pt-BR")} km</p>
-                </div>
-                <div className="relative pt-4 pb-6 flex-1">
-                  <div className={`absolute left-[-20px] top-5 w-3 h-3 rounded-full border-2 z-10 ${item.tipo === "preventiva" ? "border-primary bg-primary" : "border-amber-500 bg-amber-500"}`}
-                    style={{ boxShadow: item.tipo === "preventiva" ? "0 0 8px rgba(37,117,245,0.7)" : "0 0 8px rgba(245,158,11,0.7)" }} />
-                  <div className="rounded-xl p-4 transition-all duration-200"
-                    style={{ background: "rgba(15,26,46,0.9)", border: "1px solid rgba(148,163,184,0.11)" }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.2)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(0,0,0,0.3)"; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.11)"; (e.currentTarget as HTMLElement).style.boxShadow = ""; }}
-                  >
-                    <div className="flex items-start justify-between mb-2 gap-4">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs border capitalize ${item.tipo === "preventiva" ? "bg-primary/10 border-primary/25 text-primary" : "bg-amber-500/10 border-amber-500/25 text-amber-400"}`}>{item.tipo}</span>
-                        <span className="text-xs text-muted-foreground">{item.responsavel}</span>
-                      </div>
-                      <span className="text-sm font-semibold text-amber-400" style={{ fontFamily: "DM Mono, monospace" }}>R$ {item.custo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
-                    </div>
-                    <p className="text-foreground font-medium text-sm mb-2">{item.servico}</p>
-                    {item.pecas.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {item.pecas.map((piece) => <span key={piece} className="text-xs px-2 py-0.5 rounded-md" style={{ background: "rgba(255,255,255,0.05)", color: "#94a3b8" }}>{piece}</span>)}
-                      </div>
-                    )}
+      {/* Timeline */}
+      <div className="space-y-4">
+        {filtered.map((item, index) => {
+          const viatura = viaturas.find((v) => v.id === item.viaturaId);
+          return (
+            <Card key={item.id} className="hover:shadow-md border-l-4 border-l-[#1E3A5F]">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1E3A5F]/10">
+                    <History size={16} className="text-[#1E3A5F]" />
                   </div>
                 </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="font-semibold text-gray-900">{item.servico}</h3>
+                    <Badge variant={getTipoColor(item.tipo) as any}>{getTipoLabel(item.tipo)}</Badge>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide">Viatura</p>
+                      <p className="text-gray-800 font-medium">{viatura?.placa || "N/A"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide">Data</p>
+                      <p className="text-gray-800 font-medium">{item.data}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide">Responsável</p>
+                      <p className="text-gray-800 font-medium">{item.responsavel}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide">KM</p>
+                      <p className="text-gray-800 font-medium">{item.km?.toLocaleString() || "N/A"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide">Custo</p>
+                      <p className="text-gray-800 font-medium">{item.custo.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
+                    </div>
+                  </div>
+                  {item.pecas && item.pecas.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Peças Utilizadas</p>
+                      <div className="flex flex-wrap gap-2">
+                        {item.pecas.map((peca, idx) => (
+                          <Badge key={idx} variant="primary">
+                            {peca}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
+            </Card>
+          );
+        })}
+      </div>
+
+      {filtered.length === 0 && (
+        <Card className="text-center py-12">
+          <History size={48} className="mx-auto text-gray-300 mb-4" />
+          <p className="text-gray-500">Nenhum histórico de manutenção encontrado</p>
+        </Card>
       )}
     </div>
   );
