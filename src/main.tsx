@@ -4,6 +4,7 @@ import { FleetProvider } from "./app/context/FleetContext.tsx";
 import "leaflet/dist/leaflet.css";
 import "./styles/design-system.css";
 import "./styles/index.css";
+import "./styles/globals.css";
 
 createRoot(document.getElementById("root")!).render(
   <FleetProvider>
