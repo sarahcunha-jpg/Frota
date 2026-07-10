@@ -1,219 +1,136 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { colors, spacing } from '../../styles/tokens';
 
-interface Vehicle {
+interface MarkerData {
   id: string;
-  placa: string;
-  modelo: string;
-  status: string;
-  x: number;
-  y: number;
-  velocidade: number;
-  direcao: number;
-  km: number;
+  label: string;
+  lat: number;
+  lng: number;
+  status: 'available' | 'in_use' | 'maintenance' | 'waiting_parts' | 'out_of_service';
+  speed: number;
+  bearing: number;
 }
 
 interface TrackingMapProps {
-  vehicles: Vehicle[];
-  selectedVehicleId?: string;
-  onVehicleSelect?: (vehicleId: string) => void;
+  markers: MarkerData[];
+  selectedMarker?: string;
+  onMarkerClick?: (markerId: string) => void;
   height?: string;
+  zoom?: number;
 }
 
-interface MarkerWithPopup extends L.Marker {
-  vehicleId?: string;
-}
+const getMarkerIcon = (status: MarkerData['status'], isSelected: boolean) => {
+  const statusColors: Record<MarkerData['status'], string> = {
+    available: '#27AE60',
+    in_use: '#3498DB',
+    maintenance: '#F39C12',
+    waiting_parts: '#F39C12',
+    out_of_service: '#E74C3C',
+  };
+
+  const color = statusColors[status];
+  const borderColor = isSelected ? '#000' : '#fff';
+  const borderWidth = isSelected ? 3 : 2;
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" stroke="${borderColor}" stroke-width="${borderWidth}">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-12c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/>
+    </svg>
+  `;
+
+  return L.icon({
+    iconUrl: `data:image/svg+xml;base64,${btoa(svg)}`,
+    iconSize: isSelected ? [40, 40] : [32, 32],
+    iconAnchor: isSelected ? [20, 20] : [16, 16],
+    popupAnchor: [0, -16],
+  });
+};
 
 const TrackingMap: React.FC<TrackingMapProps> = ({
-  vehicles,
-  selectedVehicleId,
-  onVehicleSelect,
-  height = '500px',
+  markers,
+  selectedMarker,
+  onMarkerClick,
+  height = '400px',
+  zoom = 13,
 }) => {
-  const mapRef = useRef<L.Map | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const markersRef = useRef<Map<string, MarkerWithPopup>>(new Map());
-  const polylinesRef = useRef<Map<string, L.Polyline>>(new Map());
-  const [isMapReady, setIsMapReady] = useState(false);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<L.Map | null>(null);
+  const markerRefs = useRef<Record<string, L.Marker>>({});
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   // Inicializar mapa
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
+    if (!mapContainer.current || map.current) return;
 
     // Criar mapa centrado em Blumenau, SC
-    const map = L.map(containerRef.current).setView([-26.9319, -49.066], 13);
+    map.current = L.map(mapContainer.current).setView([-26.924, -49.066], zoom);
 
-    // Adicionar tile layer (OpenStreetMap)
+    // Adicionar camada OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
       maxZoom: 19,
-    }).addTo(map);
+    }).addTo(map.current);
 
-    mapRef.current = map;
-    setIsMapReady(true);
+    setMapLoaded(true);
 
     return () => {
-      map.remove();
-      mapRef.current = null;
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
   }, []);
 
   // Atualizar markers
   useEffect(() => {
-    if (!mapRef.current || !isMapReady) return;
+    if (!map.current || !mapLoaded) return;
 
-    vehicles.forEach((vehicle) => {
-      const map = mapRef.current!;
-      const existingMarker = markersRef.current.get(vehicle.id);
-      const latlng = L.latLng(vehicle.y, vehicle.x);
+    // Limpar markers antigos
+    Object.values(markerRefs.current).forEach((marker) => marker.remove());
+    markerRefs.current = {};
 
-      // Cores por status
-      const statusColor = {
-        operação: '#27AE60',
-        manutenção: '#F39C12',
-        indisponível: '#E74C3C',
-      }[vehicle.status] || '#95A5A6';
+    // Adicionar novos markers
+    markers.forEach((markerData) => {
+      const isSelected = markerData.id === selectedMarker;
+      const icon = getMarkerIcon(markerData.status, isSelected);
 
-      const statusEmoji = {
-        operação: '🟢',
-        manutenção: '🟡',
-        indisponível: '🔴',
-      }[vehicle.status] || '⚪';
+      const marker = L.marker([markerData.lat, markerData.lng], { icon })
+        .bindPopup(
+          `<div style="text-align: center;">
+            <strong>${markerData.label}</strong><br/>
+            Velocidade: ${markerData.speed} km/h<br/>
+            Status: ${markerData.status}
+          </div>`
+        )
+        .addTo(map.current!);
 
-      // Se marker já existe, atualizar posição
-      if (existingMarker) {
-        existingMarker.setLatLng(latlng);
-        existingMarker.setRotationAngle(vehicle.direcao);
-      } else {
-        // Criar novo marker com ícone customizado
-        const html = `
-          <div style="
-            width: 40px;
-            height: 40px;
-            background: ${statusColor};
-            border: 3px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            transform: rotate(${vehicle.direcao}deg);
-            transition: all 200ms ease;
-            cursor: pointer;
-          ">
-            🚓
-          </div>
-        `;
+      marker.on('click', () => onMarkerClick?.(markerData.id));
 
-        const icon = L.divIcon({
-          html,
-          iconSize: [40, 40],
-          iconAnchor: [20, 20],
-          popupAnchor: [0, -20],
-        });
-
-        const marker = L.marker(latlng, { icon }) as MarkerWithPopup;
-        marker.vehicleId = vehicle.id;
-
-        // Popup com informações
-        const popupContent = `
-          <div style="min-width: 250px; font-family: Inter, sans-serif;">
-            <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #1F2937;">
-              ${vehicle.placa}
-            </h3>
-            <p style="margin: 0 0 8px 0; font-size: 13px; color: #6B7280;">
-              ${vehicle.modelo}
-            </p>
-            <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 8px 0;" />
-            <div style="display: grid; gap: 6px; font-size: 13px;">
-              <div style="display: grid; grid-template-columns: 80px 1fr;">
-                <span style="color: #6B7280; font-weight: 500;">Velocidade:</span>
-                <span style="color: #1F2937; font-weight: 600;">${vehicle.velocidade} km/h</span>
-              </div>
-              <div style="display: grid; grid-template-columns: 80px 1fr;">
-                <span style="color: #6B7280; font-weight: 500;">Direção:</span>
-                <span style="color: #1F2937; font-weight: 600;">${vehicle.direcao}°</span>
-              </div>
-              <div style="display: grid; grid-template-columns: 80px 1fr;">
-                <span style="color: #6B7280; font-weight: 500;">Status:</span>
-                <span style="color: #1F2937; font-weight: 600;">${statusEmoji} ${vehicle.status}</span>
-              </div>
-              <div style="display: grid; grid-template-columns: 80px 1fr;">
-                <span style="color: #6B7280; font-weight: 500;">Km:</span>
-                <span style="color: #1F2937; font-weight: 600;">${vehicle.km.toLocaleString('pt-BR')}</span>
-              </div>
-            </div>
-          </div>
-        `;
-
-        marker.bindPopup(popupContent);
-
-        marker.on('click', () => {
-          onVehicleSelect?.(vehicle.id);
-          marker.openPopup();
-        });
-
-        marker.addTo(map);
-        markersRef.current.set(vehicle.id, marker);
-      }
-
-      // Adicionar histórico de rota (se houver)
-      if (!polylinesRef.current.has(vehicle.id)) {
-        const routePoints = generateRoutePoints(vehicle);
-        if (routePoints.length > 1) {
-          const polyline = L.polyline(routePoints, {
-            color: statusColor,
-            weight: 2,
-            opacity: 0.5,
-            dashArray: '5, 5',
-          }).addTo(map);
-          polylinesRef.current.set(vehicle.id, polyline);
-        }
-      }
+      markerRefs.current[markerData.id] = marker;
     });
-  }, [vehicles, isMapReady, onVehicleSelect]);
 
-  // Destacar marker selecionado
-  useEffect(() => {
-    if (!mapRef.current || !isMapReady) return;
-
-    markersRef.current.forEach((marker, vehicleId) => {
-      if (vehicleId === selectedVehicleId) {
-        marker.setOpacity(1);
-        marker.setZIndexOffset(1000);
-      } else {
-        marker.setOpacity(0.7);
-        marker.setZIndexOffset(0);
-      }
-    });
-  }, [selectedVehicleId, isMapReady]);
+    // Focar no marker selecionado
+    if (selectedMarker && markerRefs.current[selectedMarker]) {
+      const marker = markerRefs.current[selectedMarker];
+      map.current.setView(marker.getLatLng(), zoom);
+      marker.openPopup();
+    }
+  }, [markers, selectedMarker, mapLoaded, zoom]);
 
   return (
     <div
-      ref={containerRef}
+      ref={mapContainer}
       style={{
         width: '100%',
         height,
         borderRadius: '8px',
         overflow: 'hidden',
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-        backgroundColor: '#F0F9FF',
       }}
     />
   );
 };
-
-// Gerar pontos de rota simulados
-function generateRoutePoints(vehicle: Vehicle): [number, number][] {
-  const basePoints: [number, number][] = [
-    [-26.9319, -49.066], // Centro
-    [-26.927, -49.07],
-    [-26.935, -49.065],
-    [vehicle.y, vehicle.x],
-  ];
-  return basePoints;
-}
 
 export default TrackingMap;
