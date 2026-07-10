@@ -1,48 +1,100 @@
 import React from 'react';
-import { Card } from './Card';
+import { cn } from './utils';
 
 interface KPICardProps {
-  label: string;
+  title: string;
   value: string | number;
-  subtitle?: string;
-  icon?: React.ComponentType<{ size?: number; className?: string }>;
-  iconBg?: string;
+  unit?: string;
+  icon?: React.ReactNode;
   trend?: {
     value: number;
     direction: 'up' | 'down';
   };
+  color?: 'blue' | 'green' | 'orange' | 'red';
+  onClick?: () => void;
 }
 
-export function KPICard({
-  label,
+const colorClasses: Record<string, { bg: string; text: string; icon: string }> = {
+  blue: {
+    bg: 'bg-blue-50',
+    text: 'text-blue-900',
+    icon: 'text-blue-600',
+  },
+  green: {
+    bg: 'bg-green-50',
+    text: 'text-green-900',
+    icon: 'text-green-600',
+  },
+  orange: {
+    bg: 'bg-orange-50',
+    text: 'text-orange-900',
+    icon: 'text-orange-600',
+  },
+  red: {
+    bg: 'bg-red-50',
+    text: 'text-red-900',
+    icon: 'text-red-600',
+  },
+};
+
+export const KPICard: React.FC<KPICardProps> = ({
+  title,
   value,
-  subtitle,
-  icon: Icon,
-  iconBg = 'linear-gradient(135deg, #1E3A5F 0%, #2c4f7c 100%)',
+  unit,
+  icon,
   trend,
-}: KPICardProps) {
+  color = 'blue',
+  onClick,
+}) => {
+  const colors = colorClasses[color];
+
   return (
-    <Card className="flex items-center justify-between">
-      <div className="flex-1">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{label}</p>
-        <div className="flex items-baseline gap-2">
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
-          {trend && (
-            <span className={`text-sm font-semibold ${trend.direction === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-              {trend.direction === 'up' ? '↑' : '↓'} {trend.value}%
-            </span>
-          )}
-        </div>
-        {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+    <div
+      onClick={onClick}
+      className={cn(
+        'bg-white border border-neutral-200 rounded-lg p-4 shadow-sm transition-all duration-200',
+        onClick && 'cursor-pointer hover:shadow-md'
+      )}
+    >
+      {/* Header */}
+      <div className="flex justify-between items-start mb-3">
+        <h3 className="text-sm font-semibold text-neutral-600">{title}</h3>
+        {icon && (
+          <div className={cn('text-2xl p-2 rounded-lg', colors.bg, colors.icon)}>
+            {icon}
+          </div>
+        )}
       </div>
-      {Icon && (
-        <div
-          className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-          style={{ background: iconBg }}
-        >
-          <Icon size={24} className="text-white" />
+
+      {/* Value */}
+      <div className="flex items-baseline gap-2 mb-3">
+        <span className="text-2xl font-bold text-neutral-900">{value}</span>
+        {unit && (
+          <span className="text-sm text-neutral-600">{unit}</span>
+        )}
+      </div>
+
+      {/* Trend */}
+      {trend && (
+        <div className="flex items-center gap-1 text-sm">
+          <span
+            className={cn(
+              trend.direction === 'up' ? 'text-success' : 'text-danger'
+            )}
+          >
+            {trend.direction === 'up' ? '↑' : '↓'}
+          </span>
+          <span
+            className={cn(
+              'font-semibold',
+              trend.direction === 'up' ? 'text-success' : 'text-danger'
+            )}
+          >
+            {trend.value}%
+          </span>
+          <span className="text-neutral-600">vs mês anterior</span>
         </div>
       )}
-    </Card>
+    </div>
   );
-}
+};

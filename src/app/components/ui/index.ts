@@ -1,7 +1,12 @@
-export { Card } from './Card';
+export { Card, CardHeader, CardBody, CardFooter } from './Card';
 export { Button } from './Button';
-export { Badge } from './Badge';
-export { Input } from './Input';
+export { StatusBadge } from './StatusBadge';
+export { Input, Select, TextArea } from './Input';
 export { KPICard } from './KPICard';
 export { cn } from './utils';
 export { useIsMobile } from './use-mobile';
+export { Sidebar } from './Sidebar';
+export { Header } from './Header';
+export { FormSection, FormField, FormActions } from './FormSection';
+export { DataTable } from './DataTable';
+export { Layout } from './Layout';
