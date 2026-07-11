@@ -1,7 +1,7 @@
 import { Car, Edit2, Trash2, Eye, Search, Filter } from "lucide-react";
 import { useState } from "react";
 import { useFleet } from "../context/FleetContext";
-import { Card, Button, Badge, Input } from "./ui";
+import { Card, Button, StatusBadge, Input } from "./ui";
 
 interface ViaturaFilters {
   search: string;
@@ -120,9 +120,9 @@ export default function Viaturas() {
                     <p className="text-xs text-gray-500">Número: {viatura.numero}</p>
                   </div>
                 </div>
-                <Badge variant={getStatusColor(viatura.status) as any}>
+                <StatusBadge variant={getStatusColor(viatura.status) as any}>
                   {getStatusLabel(viatura.status)}
-                </Badge>
+                </StatusBadge>
               </div>
             }
           >
