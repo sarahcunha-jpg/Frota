@@ -1,7 +1,7 @@
 import { Calendar, Plus, Edit2, Trash2, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { useFleet } from "../context/FleetContext";
-import { Card, Button, Badge, Input } from "./ui";
+import { Card, Button, StatusBadge, Input } from "./ui";
 import { deriveMaintenanceStatus } from "../lib/fleet";
 
 export default function ManutencaoPreventiva() {
@@ -94,9 +94,9 @@ export default function ManutencaoPreventiva() {
                   <div className="flex items-center gap-3 mb-2">
                     <Calendar size={18} className="text-[#1E3A5F]" />
                     <h3 className="font-semibold text-gray-900">{manutencao.item}</h3>
-                    <Badge variant={getStatusColor(status) as any}>
+                    <StatusBadge variant={getStatusColor(status) as any}>
                       {getStatusIcon(status)} {status.toUpperCase()}
-                    </Badge>
+                    </StatusBadge>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
